@@ -15,6 +15,7 @@ export function DashboardLayout() {
     const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [avatarError, setAvatarError] = useState(false);
 
     // Add reactivity for Avatar updates
     const [userData, setUserData] = useState<any>(() => {
@@ -25,7 +26,10 @@ export function DashboardLayout() {
     useEffect(() => {
         const handleProfileUpdate = () => {
             const storedUser = localStorage.getItem('@mscred:user');
-            if (storedUser) setUserData(JSON.parse(storedUser));
+            if (storedUser) {
+                setUserData(JSON.parse(storedUser));
+                setAvatarError(false);
+            }
         };
         window.addEventListener('mscred:profileUpdated', handleProfileUpdate);
         return () => window.removeEventListener('mscred:profileUpdated', handleProfileUpdate);
@@ -62,7 +66,7 @@ export function DashboardLayout() {
             {/* Sidebar Desktop & Mobile */}
             <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:block ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between h-16 px-6 bg-slate-950/50">
-                    <img src="/logo.png" alt="MSCRED" className="h-8 w-auto object-contain brightness-0 invert" />
+                    <img src="/logo.png" alt="MSCRED" className="h-8 w-auto object-contain" />
                     <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-300 hover:text-white">
                         <X className="w-6 h-6" />
                     </button>
@@ -119,15 +123,16 @@ export function DashboardLayout() {
                         </div>
 
                         <Link to="/dashboard/profile" title="Meu Perfil" className="h-9 w-9 bg-mscred-orange/10 rounded-full flex items-center justify-center text-mscred-orange hover:bg-mscred-orange hover:text-white transition-colors overflow-hidden">
-                            {avatar_url && (
+                            {avatar_url && !avatarError ? (
                                 <img
                                     src={avatar_url}
                                     alt="Avatar"
                                     className="w-full h-full object-cover"
-                                    onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }}
+                                    onError={() => setAvatarError(true)}
                                 />
+                            ) : (
+                                <UserCircle className="w-6 h-6" />
                             )}
-                            <UserCircle className={`w-6 h-6 ${avatar_url ? 'hidden' : ''}`} />
                         </Link>
 
                         <div className="h-6 w-px bg-slate-200 mx-2"></div>
