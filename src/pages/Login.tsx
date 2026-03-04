@@ -39,7 +39,7 @@ export function Login() {
             <div className="absolute inset-0 bg-mscred-blue/80 backdrop-blur-sm"></div>
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center mt-6">
-                <img src="/logo.png" alt="MSCRED" className="h-16 w-auto object-contain drop-shadow-xl" />
+                <img src="/logo.png" alt="MSCRED" className="h-20 sm:h-24 w-auto object-contain drop-shadow-2xl" />
                 <p className="mt-4 text-center text-sm text-mscred-light/90 font-medium">
                     Portal de Gestão de Atendimentos Consignados
                 </p>
@@ -120,7 +120,7 @@ export function Login() {
                     </form>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

@@ -65,9 +65,9 @@ export function DashboardLayout() {
         <div className="min-h-screen bg-slate-50 flex">
             {/* Sidebar Desktop & Mobile */}
             <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:block ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex items-center justify-between h-16 px-6 bg-slate-950/50">
-                    <img src="/logo.png" alt="MSCRED" className="h-8 w-auto object-contain" />
-                    <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-300 hover:text-white">
+                <div className="flex items-center justify-center h-20 px-4 bg-slate-950/80 border-b border-slate-800 relative shadow-sm">
+                    <img src="/logo.png" alt="MSCRED" className="max-h-12 w-auto object-contain drop-shadow-md" />
+                    <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden absolute right-4 text-slate-300 hover:text-white">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -122,7 +122,7 @@ export function DashboardLayout() {
                             </span>
                         </div>
 
-                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-9 w-9 bg-mscred-orange/10 rounded-full flex items-center justify-center text-mscred-orange hover:bg-mscred-orange hover:text-white transition-colors overflow-hidden">
+                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-10 w-10 shrink-0 bg-slate-100 border-2 border-slate-200 rounded-full flex items-center justify-center text-mscred-blue hover:border-mscred-orange transition-all overflow-hidden shadow-sm">
                             {avatar_url && !avatarError ? (
                                 <img
                                     src={avatar_url}
@@ -131,7 +131,7 @@ export function DashboardLayout() {
                                     onError={() => setAvatarError(true)}
                                 />
                             ) : (
-                                <UserCircle className="w-6 h-6" />
+                                <span className="text-sm font-bold tracking-tight">{name ? name.substring(0, 2).toUpperCase() : 'ME'}</span>
                             )}
                         </Link>
 
