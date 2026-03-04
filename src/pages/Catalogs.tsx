@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { catalogsApi, CatalogItem, CatalogTypeDb, CatalogTypeEndpoint } from '../lib/api/catalogs';
-import { Settings, Plus, Edit2, X, Loader2, AlertCircle } from 'lucide-react';
+import { integrationsApi, SyncStats } from '../lib/api/integrations';
+import { api } from '../lib/axios';
+import { Settings, Plus, Edit2, X, Loader2, AlertCircle, Database, Save, RefreshCw, CheckCircle2 } from 'lucide-react';
 
 interface TabConfig {
     id: string;
@@ -14,6 +16,7 @@ const TABS: TabConfig[] = [
     { id: 'channels', label: 'Canais de Venda', dbType: 'sales_channels', endpoint: 'sales-channels' },
     { id: 'products', label: 'Produtos', dbType: 'products', endpoint: 'products' },
     { id: 'statuses', label: 'Status da Esteira', dbType: 'attendance_statuses', endpoint: 'attendance-statuses' },
+    { id: 'migration', label: 'Migração Planilhas', dbType: 'products', endpoint: 'products' }, // products is dummy here
 ];
 
 export function Catalogs() {
@@ -28,9 +31,40 @@ export function Catalogs() {
     const [itemName, setItemName] = useState('');
     const [saving, setSaving] = useState(false);
 
+    // Migration state
+    const [users, setUsers] = useState<any[]>([]);
+    const [selectedUserId, setSelectedUserId] = useState('');
+    const [sheetId, setSheetId] = useState('');
+    const [syncing, setSyncing] = useState(false);
+    const [syncResult, setSyncResult] = useState<{ message: string, stats: SyncStats } | null>(null);
+
     useEffect(() => {
+        if (activeTab.id === 'migration') {
+            fetchUsers();
+            return;
+        }
         fetchData(activeTab.endpoint);
     }, [activeTab]);
+
+    async function fetchUsers() {
+        try {
+            setLoading(true);
+            const response = await api.get('/users');
+            setUsers(response.data.users || response.data);
+        } catch (err) {
+            setError('Erro ao carregar colaboradores.');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (selectedUserId) {
+            const user = users.find(u => u.id === selectedUserId);
+            setSheetId(user?.google_sheet_id || '');
+            setSyncResult(null);
+        }
+    }, [selectedUserId, users]);
 
     async function fetchData(endpoint: CatalogTypeEndpoint) {
         try {
@@ -91,6 +125,35 @@ export function Catalogs() {
         }
     };
 
+    const handleSaveSheetId = async () => {
+        if (!selectedUserId || !sheetId.trim()) return;
+        try {
+            setSaving(true);
+            await integrationsApi.updateUserSheetId(selectedUserId, sheetId);
+            // Update local users state
+            setUsers(users.map(u => u.id === selectedUserId ? { ...u, google_sheet_id: sheetId } : u));
+            alert('ID da planilha salvo com sucesso!');
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Erro ao salvar ID da planilha.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSync = async () => {
+        if (!selectedUserId) return;
+        try {
+            setSyncing(true);
+            setSyncResult(null);
+            const result = await integrationsApi.syncGoogleSheets(selectedUserId);
+            setSyncResult(result);
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Erro ao sincronizar dados.');
+        } finally {
+            setSyncing(false);
+        }
+    };
+
     return (
         <div className="space-y-6 animate-fade-in">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -103,13 +166,15 @@ export function Catalogs() {
                         Gerencie as opções dos formulários de triagem, como canais e produtos.
                     </p>
                 </div>
-                <button
-                    onClick={() => openModal()}
-                    className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-mscred-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange"
-                >
-                    <Plus className="w-4 h-4 mr-2 -ml-1" />
-                    Novo {activeTab.label}
-                </button>
+                {activeTab.id !== 'migration' && (
+                    <button
+                        onClick={() => openModal()}
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-mscred-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange"
+                    >
+                        <Plus className="w-4 h-4 mr-2 -ml-1" />
+                        Novo {activeTab.label}
+                    </button>
+                )}
             </div>
 
             {/* Tabs */}
@@ -143,79 +208,176 @@ export function Catalogs() {
                 </div>
             )}
 
-            {/* List */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-50">
-                        <tr>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                ID
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Nome
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-32 text-center">
-                                Status
-                            </th>
-                            <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Ações
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-slate-200">
-                        {loading ? (
-                            <tr>
-                                <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
-                                    <div className="flex justify-center items-center">
-                                        <Loader2 className="w-6 h-6 animate-spin text-mscred-orange" />
-                                        <span className="ml-2">Carregando dados...</span>
+            {/* Content area: Tables or Migration Form */}
+            {activeTab.id === 'migration' ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+                        <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                            <Database className="w-5 h-5 text-mscred-blue" />
+                            <h2 className="text-lg font-semibold text-slate-800">Vincular Planilha</h2>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Consultor (Proprietário da Planilha)
+                                </label>
+                                <select
+                                    value={selectedUserId}
+                                    onChange={(e) => setSelectedUserId(e.target.value)}
+                                    className="w-full border border-slate-300 rounded-lg py-2 px-3 focus:ring-mscred-orange focus:border-mscred-orange bg-white text-sm"
+                                >
+                                    <option value="">Selecione um colaborador...</option>
+                                    {users.map(u => (
+                                        <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Google Sheet ID
+                                </label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Ex: 1a2b3c4d5e6f7g8h9i0j..."
+                                        value={sheetId}
+                                        onChange={(e) => setSheetId(e.target.value)}
+                                        className="flex-1 border border-slate-300 rounded-lg py-2 px-3 focus:ring-mscred-orange focus:border-mscred-orange text-sm font-mono"
+                                    />
+                                    <button
+                                        onClick={handleSaveSheetId}
+                                        disabled={saving || !selectedUserId || !sheetId}
+                                        className="inline-flex items-center px-3 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-mscred-blue hover:bg-blue-700 focus:outline-none disabled:opacity-50"
+                                    >
+                                        <Save className={`w-4 h-4 ${saving ? 'animate-spin' : ''}`} />
+                                    </button>
+                                </div>
+                                <p className="mt-2 text-xs text-slate-500">
+                                    Dica: O ID está na URL da planilha, entre '/d/' e '/edit'. A planilha deve ser pública ou compartilhada para exportação.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-slate-50 rounded-2xl border border-dashed border-slate-300 p-6 flex flex-col items-center justify-center text-center space-y-4">
+                        <div className={`p-4 rounded-full ${syncing ? 'bg-orange-100' : 'bg-mscred-orange/10'}`}>
+                            <RefreshCw className={`w-8 h-8 text-mscred-orange ${syncing ? 'animate-spin' : ''}`} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-semibold text-slate-800">Sincronizar Dados</h3>
+                            <p className="text-sm text-slate-500 max-w-xs mt-1">
+                                Importa automaticamente os atendimentos da planilha vinculada para o sistema.
+                            </p>
+                        </div>
+
+                        <button
+                            onClick={handleSync}
+                            disabled={syncing || !selectedUserId || !sheetId}
+                            className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-base font-medium text-white bg-mscred-orange hover:bg-orange-600 focus:outline-none disabled:opacity-50 transition-all transform hover:scale-105 active:scale-95"
+                        >
+                            {syncing ? 'Sincronizando...' : 'Sincronizar Agora'}
+                        </button>
+
+                        {syncResult && (
+                            <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left w-full animate-bounce-in">
+                                <div className="flex items-center gap-2 text-emerald-800 font-semibold text-sm mb-2">
+                                    <CheckCircle2 className="w-4 h-4" />
+                                    {syncResult.message}
+                                </div>
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                    <div className="bg-white p-2 rounded-lg border border-emerald-100">
+                                        <div className="text-xs text-slate-500">Criados</div>
+                                        <div className="text-sm font-bold text-emerald-600">{syncResult.stats.created}</div>
                                     </div>
-                                </td>
-                            </tr>
-                        ) : items.length === 0 ? (
+                                    <div className="bg-white p-2 rounded-lg border border-emerald-100">
+                                        <div className="text-xs text-slate-500">Ignorados</div>
+                                        <div className="text-sm font-bold text-slate-600">{syncResult.stats.skipped}</div>
+                                    </div>
+                                    <div className="bg-white p-2 rounded-lg border border-emerald-100">
+                                        <div className="text-xs text-slate-500">Erros</div>
+                                        <div className="text-sm font-bold text-red-600">{syncResult.stats.errors}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table className="min-w-full divide-y divide-slate-200">
+                        <thead className="bg-slate-50">
                             <tr>
-                                <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
-                                    Nenhum item cadastrado nesta categoria.
-                                </td>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    ID
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    Nome
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-32 text-center">
+                                    Status
+                                </th>
+                                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    Ações
+                                </th>
                             </tr>
-                        ) : (
-                            items.map((item) => (
-                                <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                        #{item.id}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-slate-900">
-                                            {item.name}
+                        </thead>
+                        <tbody className="bg-white divide-y divide-slate-200">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                                        <div className="flex justify-center items-center">
+                                            <Loader2 className="w-6 h-6 animate-spin text-mscred-orange" />
+                                            <span className="ml-2">Carregando dados...</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center">
-                                        <button
-                                            onClick={() => handleToggleStatus(item)}
-                                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${item.active
-                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
-                                                : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
-                                                }`}
-                                            title="Clique para Ativar/Inativar"
-                                        >
-                                            {item.active ? 'Ativo' : 'Inativo'}
-                                        </button>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button
-                                            onClick={() => openModal(item)}
-                                            className="text-mscred-orange hover:text-orange-600 transition-colors"
-                                            title="Editar Nome"
-                                        >
-                                            <Edit2 className="w-4 h-4" />
-                                        </button>
+                                </tr>
+                            ) : items.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                                        Nenhum item cadastrado nesta categoria.
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            ) : (
+                                items.map((item) => (
+                                    <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                            #{item.id}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-slate-900">
+                                                {item.name}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                                            <button
+                                                onClick={() => handleToggleStatus(item)}
+                                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${item.active
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                                    : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                                                    }`}
+                                                title="Clique para Ativar/Inativar"
+                                            >
+                                                {item.active ? 'Ativo' : 'Inativo'}
+                                            </button>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button
+                                                onClick={() => openModal(item)}
+                                                className="text-mscred-orange hover:text-orange-600 transition-colors"
+                                                title="Editar Nome"
+                                            >
+                                                <Edit2 className="w-4 h-4" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
 
             {/* Modal de Criação / Edição */}
             {isModalOpen && (
