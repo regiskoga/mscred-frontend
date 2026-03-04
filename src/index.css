@@ -4,6 +4,6 @@
 
 @layer base {
   body {
-    @apply bg-bmg-light text-slate-800 antialiased font-sans;
+    @apply bg-mscred-light text-slate-800 antialiased font-sans;
   }
 }
