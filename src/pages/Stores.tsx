@@ -16,6 +16,7 @@ export function Stores() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Form state
+    const [editingStoreId, setEditingStoreId] = useState<number | null>(null);
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [bmgCode, setBmgCode] = useState('');
@@ -40,7 +41,7 @@ export function Stores() {
         }
     }
 
-    async function handleCreate(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError('');
 
@@ -51,25 +52,51 @@ export function Stores() {
 
         try {
             setSubmitting(true);
-            await api.post('/stores', {
+            const payload = {
                 name,
                 address: address.trim() || undefined,
                 bmg_code: bmgCode.trim() || undefined
-            });
+            };
+
+            if (editingStoreId) {
+                await api.put(`/stores/${editingStoreId}`, payload);
+            } else {
+                await api.post('/stores', payload);
+            }
 
             // Refetch and close
             await fetchStores();
-            setIsModalOpen(false);
+            handleCloseModal();
 
-            // Reset form
-            setName('');
-            setAddress('');
-            setBmgCode('');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Erro ao criar loja. Verifique os dados (BMG Code deve ser único).');
+            setError(err.response?.data?.message || 'Erro ao processar. Verifique os dados (BMG Code deve ser único).');
         } finally {
             setSubmitting(false);
         }
+    }
+
+    function handleOpenEdit(store: Store) {
+        setEditingStoreId(store.id);
+        setName(store.name);
+        setAddress(store.address || '');
+        setBmgCode(store.bmg_code || '');
+        setIsModalOpen(true);
+    }
+
+    function handleOpenCreate() {
+        setEditingStoreId(null);
+        setName('');
+        setAddress('');
+        setBmgCode('');
+        setIsModalOpen(true);
+    }
+
+    function handleCloseModal() {
+        setIsModalOpen(false);
+        setEditingStoreId(null);
+        setName('');
+        setAddress('');
+        setBmgCode('');
     }
 
     return (
@@ -87,7 +114,7 @@ export function Stores() {
                 </div>
 
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={handleOpenCreate}
                     className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-bmg-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue"
                 >
                     <Plus className="w-4 h-4 mr-2 -ml-1" />
@@ -173,7 +200,10 @@ export function Stores() {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <button className="text-bmg-blue hover:text-blue-900 transition-colors">
+                                                    <button
+                                                        onClick={() => handleOpenEdit(store)}
+                                                        className="text-bmg-blue hover:text-blue-900 transition-colors"
+                                                    >
                                                         Editar
                                                     </button>
                                                 </td>
@@ -197,7 +227,7 @@ export function Stores() {
 
                         <div className="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
                             <div className="absolute top-0 right-0 pt-4 pr-4">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="bg-white rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue">
+                                <button type="button" onClick={handleCloseModal} className="bg-white rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue">
                                     <span className="sr-only">Fechar</span>
                                     <X className="w-6 h-6" />
                                 </button>
@@ -208,11 +238,11 @@ export function Stores() {
                                 </div>
                                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3 className="text-lg font-medium leading-6 text-slate-900" id="modal-title">
-                                        Cadastrar Nova Loja
+                                        {editingStoreId ? 'Editar Loja Existente' : 'Cadastrar Nova Loja'}
                                     </h3>
                                     <div className="mt-2">
                                         <p className="text-sm text-slate-500">
-                                            Insira os dados da nova filial corporativa.
+                                            {editingStoreId ? 'Atualize os dados da filial.' : 'Insira os dados da nova filial corporativa.'}
                                         </p>
                                     </div>
                                 </div>
@@ -224,7 +254,7 @@ export function Stores() {
                                 </div>
                             )}
 
-                            <form onSubmit={handleCreate} className="mt-5 sm:mt-6 space-y-4">
+                            <form onSubmit={handleSubmit} className="mt-5 sm:mt-6 space-y-4">
                                 <div>
                                     <label htmlFor="name" className="block text-sm font-medium text-slate-700">Nome Oficial *</label>
                                     <input
@@ -266,11 +296,11 @@ export function Stores() {
                                         disabled={submitting}
                                         className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-bmg-blue text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                                     >
-                                        {submitting ? 'Salvando...' : 'Cadastrar Loja'}
+                                        {submitting ? 'Salvando...' : editingStoreId ? 'Salvar Edição' : 'Cadastrar Loja'}
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => setIsModalOpen(false)}
+                                        onClick={handleCloseModal}
                                         className="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue sm:mt-0 sm:w-auto sm:text-sm"
                                     >
                                         Cancelar
