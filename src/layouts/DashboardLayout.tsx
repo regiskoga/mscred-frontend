@@ -106,9 +106,9 @@ export function DashboardLayout() {
                             </span>
                         </div>
 
-                        <div className="h-9 w-9 bg-bmg-blue/10 rounded-full flex items-center justify-center text-bmg-blue">
+                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-9 w-9 bg-bmg-orange/10 rounded-full flex items-center justify-center text-bmg-orange hover:bg-bmg-orange hover:text-white transition-colors">
                             <UserCircle className="w-6 h-6" />
-                        </div>
+                        </Link>
 
                         <div className="h-6 w-px bg-slate-200 mx-2"></div>
 
