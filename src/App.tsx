@@ -7,6 +7,7 @@ import { Users } from './pages/Users';
 import { Attendances } from './pages/Attendances';
 import { Profile } from './pages/Profile';
 import { Holidays } from './pages/Holidays';
+import { Catalogs } from './pages/Catalogs';
 import { PrivateRoute } from './components/PrivateRoute';
 
 export function App() {
@@ -24,6 +25,7 @@ export function App() {
                     <Route path="/dashboard/stores" element={<Stores />} />
                     <Route path="/dashboard/users" element={<Users />} />
                     <Route path="/dashboard/holidays" element={<Holidays />} />
+                    <Route path="/dashboard/catalogs" element={<Catalogs />} />
                 </Route>
             </Route>
         </Routes>
