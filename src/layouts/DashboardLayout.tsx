@@ -7,8 +7,7 @@ import {
     Store,
     LogOut,
     Menu,
-    X,
-    UserCircle
+    X
 } from 'lucide-react';
 
 export function DashboardLayout() {
