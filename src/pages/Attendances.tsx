@@ -78,10 +78,10 @@ export function Attendances() {
                 api.get('/catalogs/sales-channels'),
             ]);
 
-            setProducts(prodRes.data.products || prodRes.data);
-            setOperationTypes(opRes.data.operation_types || opRes.data);
-            setAttendanceStatuses(opRes.data.attendance_statuses || statusRes.data); // Fixed typical typo fallback
-            setSalesChannels(channelRes.data.sales_channels || channelRes.data);
+            setProducts(Array.isArray(prodRes.data?.products) ? prodRes.data.products : (Array.isArray(prodRes.data) ? prodRes.data : []));
+            setOperationTypes(Array.isArray(opRes.data?.operation_types) ? opRes.data.operation_types : (Array.isArray(opRes.data) ? opRes.data : []));
+            setAttendanceStatuses(Array.isArray(statusRes.data?.attendance_statuses) ? statusRes.data.attendance_statuses : (Array.isArray(statusRes.data) ? statusRes.data : []));
+            setSalesChannels(Array.isArray(channelRes.data?.sales_channels) ? channelRes.data.sales_channels : (Array.isArray(channelRes.data) ? channelRes.data : []));
         } catch (error) {
             console.error('Failed to load catalogs:', error);
         }
