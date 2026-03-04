@@ -31,6 +31,10 @@ export function Attendances() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const limit = 50;
+
     // Catalog States
     const [products, setProducts] = useState<CatalogItem[]>([]);
     const [operationTypes, setOperationTypes] = useState<CatalogItem[]>([]);
@@ -54,14 +58,20 @@ export function Attendances() {
 
     useEffect(() => {
         fetchAttendances();
+    }, [page]);
+
+    useEffect(() => {
         fetchCatalogs();
     }, []);
 
     async function fetchAttendances() {
         try {
             setLoading(true);
-            const response = await api.get('/attendances');
+            const response = await api.get(`/attendances?page=${page}&limit=${limit}`);
             setAttendances(response.data.attendances || response.data);
+            if (response.data.meta) {
+                setTotalPages(response.data.meta.totalPages);
+            }
         } catch (error) {
             console.error('Failed to load attendances:', error);
         } finally {
@@ -291,6 +301,39 @@ export function Attendances() {
                                     )}
                                 </tbody>
                             </table>
+
+                            {/* Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-slate-200 sm:px-6">
+                                    <div className="flex-1 flex justify-between sm:hidden">
+                                        <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="relative inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 transition-colors">
+                                            Anterior
+                                        </button>
+                                        <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 transition-colors">
+                                            Próxima
+                                        </button>
+                                    </div>
+                                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                        <div>
+                                            <p className="text-sm text-slate-700">
+                                                Página <span className="font-medium text-mscred-blue">{page}</span> de <span className="font-medium">{totalPages}</span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 transition-colors">
+                                                    <span className="sr-only">Anterior</span>
+                                                    {'<'}
+                                                </button>
+                                                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="relative inline-flex items-center px-3 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 transition-colors">
+                                                    <span className="sr-only">Próxima</span>
+                                                    {'>'}
+                                                </button>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
