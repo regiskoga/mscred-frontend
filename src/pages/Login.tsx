@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, Loader2 } from 'lucide-react';
+import { api } from '../lib/axios';
 
 export function Login() {
     const navigate = useNavigate();
@@ -15,15 +16,17 @@ export function Login() {
         setError(null);
 
         try {
-            // Mocked Backend Call For Now. In future steps, this calls Axios hook mapped to the Node backend.
-            // const response = await api.post('/auth/login', { email, password })
-            await new Promise((resolve) => setTimeout(resolve, 800)); // Artificial Load
+            // Chamada real para o Backend
+            const response = await api.post('/auth/login', { email, password });
 
-            if (email === 'admin@bmg.com' && password === 'admin123') {
-                navigate('/dashboard');
-            } else {
-                throw new Error('Credenciais inválidas.');
-            }
+            const { token, user } = response.data;
+
+            // Salvando o JWT do Backend no localStorage de forma segura
+            localStorage.setItem('@mscred:token', token);
+            localStorage.setItem('@mscred:user', JSON.stringify(user));
+
+            navigate('/dashboard'); // Ou a página inicial do seu app
+
         } catch (err: any) {
             setError(err.message || 'Erro de conexão.');
         } finally {
