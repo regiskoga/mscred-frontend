@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User as UserIcon, Lock, Phone, MapPin, Camera, Building2, ShieldAlert, BadgeCheck, Loader2 } from 'lucide-react';
+import { User as UserIcon, Lock, Phone, MapPin, Camera, Building2, ShieldAlert, BadgeCheck, Loader2, UserCircle } from 'lucide-react';
 import { api } from '../lib/axios';
 
 interface ProfileData {
@@ -138,7 +138,7 @@ export function Profile() {
         );
     }
 
-    const initials = profile.name.slice(0, 2).toUpperCase();
+    // JSX Content
 
     return (
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in pb-12">
