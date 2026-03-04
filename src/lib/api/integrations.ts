@@ -4,6 +4,7 @@ export interface SyncStats {
     created: number;
     skipped: number;
     errors: number;
+    errorDetails?: string[];
 }
 
 export interface SyncResponse {

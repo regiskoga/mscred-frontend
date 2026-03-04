@@ -300,6 +300,19 @@ export function Catalogs() {
                                         <div className="text-sm font-bold text-red-600">{syncResult.stats.errors}</div>
                                     </div>
                                 </div>
+                                {syncResult.stats.errorDetails && syncResult.stats.errorDetails.length > 0 && (
+                                    <div className="mt-4 pt-4 border-t border-emerald-200">
+                                        <p className="text-sm font-medium text-slate-800 mb-2">Detalhes dos Erros:</p>
+                                        <ul className="text-xs text-slate-600 space-y-1 max-h-40 overflow-y-auto w-full text-left pr-2 custom-scrollbar">
+                                            {syncResult.stats.errorDetails.map((err, i) => (
+                                                <li key={i} className="flex gap-2 items-start bg-white p-2 text-red-700 rounded border border-red-100">
+                                                    <AlertCircle className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />
+                                                    <span className="leading-relaxed">{err}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
