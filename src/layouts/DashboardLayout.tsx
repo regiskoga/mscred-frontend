@@ -7,8 +7,8 @@ import {
     Store,
     LogOut,
     Menu,
-    X,
-    UserCircle
+    Menu,
+    X
 } from 'lucide-react';
 
 export function DashboardLayout() {
@@ -123,16 +123,12 @@ export function DashboardLayout() {
                         </div>
 
                         <Link to="/dashboard/profile" title="Meu Perfil" className="h-10 w-10 shrink-0 bg-slate-50 border-2 border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:border-mscred-orange hover:text-mscred-orange transition-all overflow-hidden shadow-sm">
-                            {avatar_url && !avatarError ? (
-                                <img
-                                    src={avatar_url}
-                                    alt="Avatar"
-                                    className="w-full h-full object-cover"
-                                    onError={() => setAvatarError(true)}
-                                />
-                            ) : (
-                                <UserCircle className="w-6 h-6 shrink-0" />
-                            )}
+                            <img
+                                src={(avatar_url && !avatarError) ? avatar_url : `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=F0F9FF&color=0284C7`}
+                                alt="Avatar"
+                                className="w-full h-full object-cover"
+                                onError={() => setAvatarError(true)}
+                            />
                         </Link>
 
                         <div className="h-6 w-px bg-slate-200 mx-2"></div>

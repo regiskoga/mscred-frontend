@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User as UserIcon, Lock, Phone, MapPin, Camera, Building2, ShieldAlert, BadgeCheck, Loader2, UserCircle } from 'lucide-react';
+import { User as UserIcon, Lock, Phone, MapPin, Camera, Building2, ShieldAlert, BadgeCheck, Loader2 } from 'lucide-react';
 import { api } from '../lib/axios';
 
 interface ProfileData {
@@ -16,6 +16,7 @@ interface ProfileData {
 export function Profile() {
     const [profile, setProfile] = useState<ProfileData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [avatarError, setAvatarError] = useState(false);
 
     // Form Inputs
     const [phone, setPhone] = useState('');
@@ -43,6 +44,7 @@ export function Profile() {
             setPhone(data.phone || '');
             setAddress(data.address || '');
             setAvatarUrl(data.avatar_url || '');
+            setAvatarError(false);
 
         } catch (error) {
             console.error('Failed to load profile:', error);
@@ -148,21 +150,12 @@ export function Profile() {
                 <div className="px-6 sm:px-10 pb-8">
                     <div className="relative flex justify-between items-end -mt-12 mb-6">
                         <div className="relative">
-                            {avatarUrl ? (
-                                <img
-                                    src={avatarUrl}
-                                    alt="Avatar"
-                                    className="w-24 h-24 rounded-full border-4 border-white object-cover bg-white shadow-md relative z-10"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                        const sibling = e.currentTarget.nextElementSibling;
-                                        if (sibling) sibling.classList.remove('hidden');
-                                    }}
-                                />
-                            ) : null}
-                            <div className={`w-24 h-24 rounded-full border-4 border-white bg-slate-50 flex items-center justify-center shadow-md relative z-10 text-slate-300 ${avatarUrl ? 'hidden' : ''}`}>
-                                <UserCircle className="w-16 h-16 shrink-0" />
-                            </div>
+                            <img
+                                src={(avatarUrl && !avatarError) ? avatarUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || 'User')}&background=F0F9FF&color=0284C7`}
+                                alt="Avatar"
+                                className="w-24 h-24 rounded-full border-4 border-white object-cover bg-white shadow-md relative z-10"
+                                onError={() => setAvatarError(true)}
+                            />
                             <div className="absolute top-16 -right-2 bg-white rounded-full p-1.5 shadow border border-slate-100 z-20">
                                 <Camera className="w-4 h-4 text-slate-400" />
                             </div>
