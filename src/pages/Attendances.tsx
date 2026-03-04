@@ -166,7 +166,7 @@ export function Attendances() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                        <Briefcase className="w-6 h-6 text-bmg-orange" />
+                        <Briefcase className="w-6 h-6 text-mscred-orange" />
                         Esteira de Atendimentos
                     </h1>
                     <p className="mt-1 text-sm text-slate-500">
@@ -182,13 +182,13 @@ export function Attendances() {
                             placeholder="Buscar cliente, CPF..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 pr-4 py-2 w-full sm:w-64 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-bmg-orange focus:border-bmg-orange text-sm"
+                            className="pl-10 pr-4 py-2 w-full sm:w-64 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-mscred-orange focus:border-mscred-orange text-sm"
                         />
                     </div>
 
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-bmg-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-orange"
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-mscred-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange"
                     >
                         <Plus className="w-4 h-4 mr-2 -ml-1" />
                         Novo Atendimento
@@ -226,7 +226,7 @@ export function Attendances() {
                                         <tr>
                                             <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                                                 <div className="flex justify-center items-center">
-                                                    <Loader2 className="w-6 h-6 animate-spin text-bmg-orange" />
+                                                    <Loader2 className="w-6 h-6 animate-spin text-mscred-orange" />
                                                     <span className="ml-2">Carregando esteira...</span>
                                                 </div>
                                             </td>
@@ -242,7 +242,7 @@ export function Attendances() {
                                             <tr key={a.id} className="hover:bg-slate-50 transition-colors">
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm font-medium text-slate-900 flex items-center gap-2">
-                                                        <User className="w-4 h-4 text-bmg-blue" />
+                                                        <User className="w-4 h-4 text-mscred-blue" />
                                                         {a.customer_name}
                                                     </div>
                                                     <div className="text-xs text-slate-500 mt-1 font-mono">
@@ -306,7 +306,7 @@ export function Attendances() {
 
                         <div className="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full sm:p-6">
                             <div className="absolute top-0 right-0 pt-4 pr-4">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="bg-white rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-orange">
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="bg-white rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange">
                                     <span className="sr-only">Fechar</span>
                                     <X className="w-6 h-6" />
                                 </button>
@@ -314,7 +314,7 @@ export function Attendances() {
 
                             <div className="sm:flex sm:items-start mb-6">
                                 <div className="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-orange-50 rounded-full sm:mx-0 sm:h-10 sm:w-10">
-                                    <Banknote className="w-6 h-6 text-bmg-orange" />
+                                    <Banknote className="w-6 h-6 text-mscred-orange" />
                                 </div>
                                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3 className="text-lg font-medium leading-6 text-slate-900" id="modal-title">
@@ -343,7 +343,7 @@ export function Attendances() {
                                                 type="text"
                                                 value={customerName}
                                                 onChange={(e) => setCustomerName(e.target.value)}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                                 required
                                             />
                                         </div>
@@ -353,7 +353,7 @@ export function Attendances() {
                                                 type="text"
                                                 value={customerCpf}
                                                 onChange={handleCpfChange}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm font-mono"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm font-mono"
                                                 placeholder="00011122233"
                                                 required
                                                 maxLength={11}
@@ -365,7 +365,7 @@ export function Attendances() {
                                                 type="text"
                                                 value={city}
                                                 onChange={(e) => setCity(e.target.value)}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                                 required
                                             />
                                         </div>
@@ -375,7 +375,7 @@ export function Attendances() {
                                                 type="date"
                                                 value={attendanceDate}
                                                 onChange={(e) => setAttendanceDate(e.target.value)}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                                 required
                                             />
                                         </div>
@@ -391,7 +391,7 @@ export function Attendances() {
                                             <select
                                                 value={productId}
                                                 onChange={(e) => setProductId(e.target.value)}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm bg-white"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm bg-white"
                                                 required
                                             >
                                                 <option value="">Selecione...</option>
@@ -403,7 +403,7 @@ export function Attendances() {
                                             <select
                                                 value={operationTypeId}
                                                 onChange={(e) => setOperationTypeId(e.target.value)}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm bg-white"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm bg-white"
                                                 required
                                             >
                                                 <option value="">Selecione...</option>
@@ -415,7 +415,7 @@ export function Attendances() {
                                             <select
                                                 value={salesChannelId}
                                                 onChange={(e) => setSalesChannelId(e.target.value)}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm bg-white"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm bg-white"
                                                 required
                                             >
                                                 <option value="">Selecione...</option>
@@ -429,7 +429,7 @@ export function Attendances() {
                                                 value={originBank}
                                                 onChange={(e) => setOriginBank(e.target.value)}
                                                 placeholder="Ex: Itaú, INSS..."
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                             />
                                         </div>
                                     </div>
@@ -443,7 +443,7 @@ export function Attendances() {
                                             <select
                                                 value={attendanceStatusId}
                                                 onChange={(e) => setAttendanceStatusId(e.target.value)}
-                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm bg-white"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm bg-white"
                                                 required
                                             >
                                                 <option value="">Selecione...</option>
@@ -456,7 +456,7 @@ export function Attendances() {
                                                 type="checkbox"
                                                 checked={paidApproved}
                                                 onChange={(e) => setPaidApproved(e.target.checked)}
-                                                className="w-5 h-5 text-bmg-orange border-slate-300 rounded focus:ring-bmg-orange"
+                                                className="w-5 h-5 text-mscred-orange border-slate-300 rounded focus:ring-mscred-orange"
                                             />
                                             <label htmlFor="paid" className="ml-3 block text-sm font-medium text-slate-900">
                                                 Comissão / Pago Aprovado
@@ -470,14 +470,14 @@ export function Attendances() {
                                     <button
                                         type="submit"
                                         disabled={submitting}
-                                        className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-6 py-2.5 bg-bmg-orange text-base font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-orange sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                                        className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-6 py-2.5 bg-mscred-orange text-base font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                                     >
                                         {submitting ? 'Salvando Venda...' : 'Salvar Atendimento'}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setIsModalOpen(false)}
-                                        className="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-6 py-2.5 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-orange sm:mt-0 sm:w-auto sm:text-sm"
+                                        className="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-6 py-2.5 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange sm:mt-0 sm:w-auto sm:text-sm"
                                     >
                                         Voltar
                                     </button>
@@ -490,3 +490,4 @@ export function Attendances() {
         </div>
     );
 }
+

@@ -7,7 +7,7 @@ export default {
     theme: {
         extend: {
             colors: {
-                bmg: {
+                mscred: {
                     orange: '#FF6600',
                     blue: '#002E5D',
                     light: '#F5F7FA'

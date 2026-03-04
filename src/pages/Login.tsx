@@ -36,13 +36,11 @@ export function Login() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop')] bg-cover bg-center">
-            <div className="absolute inset-0 bg-bmg-blue/80 backdrop-blur-sm"></div>
+            <div className="absolute inset-0 bg-mscred-blue/80 backdrop-blur-sm"></div>
 
-            <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-                <h2 className="mt-6 text-center text-4xl font-extrabold text-white tracking-tight">
-                    BMG Help!
-                </h2>
-                <p className="mt-2 text-center text-sm text-bmg-light/80">
+            <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center mt-6">
+                <img src="/logo.png" alt="MSCRED" className="h-16 w-auto object-contain drop-shadow-xl brightness-0 invert" />
+                <p className="mt-4 text-center text-sm text-mscred-light/90 font-medium">
                     Portal de Gestão de Atendimentos Consignados
                 </p>
             </div>
@@ -69,7 +67,7 @@ export function Login() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="focus:ring-bmg-orange focus:border-bmg-orange block w-full pl-10 sm:text-sm border-slate-300 rounded-lg py-3 outline-none border transition-colors bg-slate-50 focus:bg-white"
+                                    className="focus:ring-mscred-orange focus:border-mscred-orange block w-full pl-10 sm:text-sm border-slate-300 rounded-lg py-3 outline-none border transition-colors bg-slate-50 focus:bg-white"
                                     placeholder="operador@loja.bmg.com"
                                 />
                             </div>
@@ -94,7 +92,7 @@ export function Login() {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="focus:ring-bmg-orange focus:border-bmg-orange block w-full pl-10 sm:text-sm border-slate-300 rounded-lg py-3 outline-none border transition-colors bg-slate-50 focus:bg-white"
+                                    className="focus:ring-mscred-orange focus:border-mscred-orange block w-full pl-10 sm:text-sm border-slate-300 rounded-lg py-3 outline-none border transition-colors bg-slate-50 focus:bg-white"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -110,7 +108,7 @@ export function Login() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-bmg-orange hover:bg-[#e65c00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-orange transition-all disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
+                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-mscred-orange hover:bg-[#e65c00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange transition-all disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
                             >
                                 {isLoading ? (
                                     <Loader2 className="h-5 w-5 animate-spin text-white" />
@@ -125,3 +123,4 @@ export function Login() {
         </div>
     );
 }
+

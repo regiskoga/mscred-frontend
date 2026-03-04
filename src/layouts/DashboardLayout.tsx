@@ -62,7 +62,7 @@ export function DashboardLayout() {
             {/* Sidebar Desktop & Mobile */}
             <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:block ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between h-16 px-6 bg-slate-950/50">
-                    <span className="text-xl font-bold text-white tracking-wider">BMG Help!</span>
+                    <img src="/logo.png" alt="MSCRED" className="h-8 w-auto object-contain brightness-0 invert" />
                     <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-300 hover:text-white">
                         <X className="w-6 h-6" />
                     </button>
@@ -79,7 +79,7 @@ export function DashboardLayout() {
                                 to={item.href}
                                 onClick={() => setIsSidebarOpen(false)}
                                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
-                                    ? 'bg-bmg-orange text-white shadow-md'
+                                    ? 'bg-mscred-orange text-white shadow-md'
                                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                                     }`}
                             >
@@ -118,7 +118,7 @@ export function DashboardLayout() {
                             </span>
                         </div>
 
-                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-9 w-9 bg-bmg-orange/10 rounded-full flex items-center justify-center text-bmg-orange hover:bg-bmg-orange hover:text-white transition-colors overflow-hidden">
+                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-9 w-9 bg-mscred-orange/10 rounded-full flex items-center justify-center text-mscred-orange hover:bg-mscred-orange hover:text-white transition-colors overflow-hidden">
                             {avatar_url && (
                                 <img
                                     src={avatar_url}
@@ -150,3 +150,4 @@ export function DashboardLayout() {
         </div>
     );
 }
+

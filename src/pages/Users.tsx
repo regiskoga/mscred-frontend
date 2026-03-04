@@ -137,7 +137,7 @@ export function Users() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                        <UsersIcon className="w-6 h-6 text-bmg-blue" />
+                        <UsersIcon className="w-6 h-6 text-mscred-blue" />
                         Quadro de Colaboradores
                     </h1>
                     <p className="mt-1 text-sm text-slate-500">
@@ -147,7 +147,7 @@ export function Users() {
 
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-bmg-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-orange"
+                    className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-mscred-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange"
                 >
                     <Plus className="w-4 h-4 mr-2 -ml-1" />
                     Novo Colaborador
@@ -181,7 +181,7 @@ export function Users() {
                                         <tr>
                                             <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
                                                 <div className="flex justify-center items-center">
-                                                    <Loader2 className="w-6 h-6 animate-spin text-bmg-blue" />
+                                                    <Loader2 className="w-6 h-6 animate-spin text-mscred-blue" />
                                                     <span className="ml-2">Buscando quadros funcionais...</span>
                                                 </div>
                                             </td>
@@ -259,7 +259,7 @@ export function Users() {
 
                         <div className="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
                             <div className="absolute top-0 right-0 pt-4 pr-4">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="bg-white rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue">
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="bg-white rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-blue">
                                     <span className="sr-only">Fechar</span>
                                     <X className="w-6 h-6" />
                                 </button>
@@ -267,7 +267,7 @@ export function Users() {
 
                             <div className="sm:flex sm:items-start">
                                 <div className="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-orange-50 rounded-full sm:mx-0 sm:h-10 sm:w-10">
-                                    <UsersIcon className="w-6 h-6 text-bmg-orange" />
+                                    <UsersIcon className="w-6 h-6 text-mscred-orange" />
                                 </div>
                                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3 className="text-lg font-medium leading-6 text-slate-900" id="modal-title">
@@ -294,7 +294,7 @@ export function Users() {
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                         required
                                     />
                                 </div>
@@ -304,7 +304,7 @@ export function Users() {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                         required
                                     />
                                 </div>
@@ -315,7 +315,7 @@ export function Users() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="Min. 6 caracteres"
-                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm font-mono"
+                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm font-mono"
                                         required
                                     />
                                 </div>
@@ -326,7 +326,7 @@ export function Users() {
                                         <select
                                             value={roleId}
                                             onChange={(e) => setRoleId(e.target.value)}
-                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm bg-white"
+                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm bg-white"
                                             required
                                         >
                                             <option value="">Selecione...</option>
@@ -341,7 +341,7 @@ export function Users() {
                                         <select
                                             value={storeId}
                                             onChange={(e) => setStoreId(e.target.value)}
-                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm bg-white"
+                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm bg-white"
                                             required={roleId !== '1'} // Required unless admin
                                             disabled={roleId === '1'} // Admins dont need stores
                                         >
@@ -357,14 +357,14 @@ export function Users() {
                                     <button
                                         type="submit"
                                         disabled={submitting}
-                                        className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-bmg-orange text-base font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-orange sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                                        className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-mscred-orange text-base font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                                     >
                                         {submitting ? 'Emitindo...' : 'Cadastrar Colaborador'}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setIsModalOpen(false)}
-                                        className="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue sm:mt-0 sm:w-auto sm:text-sm"
+                                        className="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-blue sm:mt-0 sm:w-auto sm:text-sm"
                                     >
                                         Cancelar
                                     </button>
@@ -377,3 +377,4 @@ export function Users() {
         </div>
     );
 }
+

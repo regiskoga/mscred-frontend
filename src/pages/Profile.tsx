@@ -122,7 +122,7 @@ export function Profile() {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
-                <Loader2 className="w-8 h-8 animate-spin text-bmg-orange" />
+                <Loader2 className="w-8 h-8 animate-spin text-mscred-orange" />
                 <span className="ml-3 text-slate-500 font-medium">Carregando seu crachá virtual...</span>
             </div>
         );
@@ -144,7 +144,7 @@ export function Profile() {
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in pb-12">
             {/* Header / Avatar Banner */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
-                <div className="h-32 bg-gradient-to-r from-bmg-orange to-orange-400"></div>
+                <div className="h-32 bg-gradient-to-r from-mscred-orange to-orange-400"></div>
                 <div className="px-6 sm:px-10 pb-8">
                     <div className="relative flex justify-between items-end -mt-12 mb-6">
                         <div className="relative">
@@ -166,7 +166,7 @@ export function Profile() {
                         </div>
 
                         <div className="text-right pb-2">
-                            <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border bg-blue-50 text-bmg-blue border-blue-100 uppercase tracking-wide">
+                            <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border bg-blue-50 text-mscred-blue border-blue-100 uppercase tracking-wide">
                                 {profile.role.name === 'ADMIN' && <ShieldAlert className="w-3 h-3 mr-1" />}
                                 {profile.role.name === 'GESTOR' && <BadgeCheck className="w-3 h-3 mr-1" />}
                                 {profile.role.name}
@@ -195,7 +195,7 @@ export function Profile() {
                     {/* General Info */}
                     <div className="p-6 sm:p-10">
                         <h2 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-2">
-                            <UserIcon className="w-5 h-5 text-bmg-orange" />
+                            <UserIcon className="w-5 h-5 text-mscred-orange" />
                             Informações Pessoais
                         </h2>
 
@@ -207,7 +207,7 @@ export function Profile() {
                                         type="url"
                                         value={avatarUrl}
                                         onChange={e => setAvatarUrl(e.target.value)}
-                                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-md border border-slate-300 focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-md border border-slate-300 focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                         placeholder="https://imgur.com/suafoto.jpg"
                                     />
                                 </div>
@@ -224,7 +224,7 @@ export function Profile() {
                                     value={phone}
                                     onChange={handlePhoneChange}
                                     maxLength={15}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                     placeholder="(11) 99999-9999"
                                 />
                             </div>
@@ -238,7 +238,7 @@ export function Profile() {
                                     type="text"
                                     value={address}
                                     onChange={e => setAddress(e.target.value)}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                     placeholder="Rua, Número, CEP..."
                                 />
                             </div>
@@ -248,7 +248,7 @@ export function Profile() {
                     {/* Security Info */}
                     <div className="p-6 sm:p-10 bg-slate-50/50">
                         <h2 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-2">
-                            <Lock className="w-5 h-5 text-bmg-orange" />
+                            <Lock className="w-5 h-5 text-mscred-orange" />
                             Segurança Zero-Trust
                         </h2>
                         <p className="text-sm text-slate-500 mb-5">
@@ -262,7 +262,7 @@ export function Profile() {
                                     type="password"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                     placeholder="Deixe em branco para manter a atual"
                                 />
                             </div>
@@ -272,7 +272,7 @@ export function Profile() {
                                     type="password"
                                     value={confirmPassword}
                                     onChange={e => setConfirmPassword(e.target.value)}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
                                     placeholder="Redigite a senha"
                                 />
                             </div>
@@ -291,7 +291,7 @@ export function Profile() {
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="inline-flex justify-center rounded-lg border border-transparent shadow-sm px-6 py-2 bg-bmg-blue text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bmg-blue sm:text-sm disabled:opacity-50 transition-colors"
+                            className="inline-flex justify-center rounded-lg border border-transparent shadow-sm px-6 py-2 bg-mscred-blue text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-blue sm:text-sm disabled:opacity-50 transition-colors"
                         >
                             {submitting ? 'Aplicando Alterações...' : 'Salvar Alterações'}
                         </button>
@@ -302,3 +302,4 @@ export function Profile() {
         </div>
     );
 }
+

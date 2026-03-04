@@ -18,7 +18,7 @@ export function Dashboard() {
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard General</h1>
                     <p className="mt-1 text-sm text-slate-500">
-                        Bem-vindo de volta, <span className="font-medium text-bmg-blue">{user.name}</span>.
+                        Bem-vindo de volta, <span className="font-medium text-mscred-blue">{user.name}</span>.
                     </p>
                 </div>
             </div>
@@ -54,3 +54,4 @@ export function Dashboard() {
         </div>
     );
 }
+
