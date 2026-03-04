@@ -153,13 +153,16 @@ export function Profile() {
                                     src={avatarUrl}
                                     alt="Avatar"
                                     className="w-24 h-24 rounded-full border-4 border-white object-cover bg-white shadow-md relative z-10"
-                                    onError={(e) => { e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + profile.name + '&background=F0F9FF&color=0284C7'; }}
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        const sibling = e.currentTarget.nextElementSibling;
+                                        if (sibling) sibling.classList.remove('hidden');
+                                    }}
                                 />
-                            ) : (
-                                <div className="w-24 h-24 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center shadow-md relative z-10">
-                                    <span className="text-2xl font-bold text-slate-500">{initials}</span>
-                                </div>
-                            )}
+                            ) : null}
+                            <div className={`w-24 h-24 rounded-full border-4 border-white bg-slate-50 flex items-center justify-center shadow-md relative z-10 text-slate-300 ${avatarUrl ? 'hidden' : ''}`}>
+                                <UserCircle className="w-16 h-16 shrink-0" />
+                            </div>
                             <div className="absolute top-16 -right-2 bg-white rounded-full p-1.5 shadow border border-slate-100 z-20">
                                 <Camera className="w-4 h-4 text-slate-400" />
                             </div>

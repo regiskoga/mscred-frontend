@@ -7,7 +7,8 @@ import {
     Store,
     LogOut,
     Menu,
-    X
+    X,
+    UserCircle
 } from 'lucide-react';
 
 export function DashboardLayout() {
@@ -121,7 +122,7 @@ export function DashboardLayout() {
                             </span>
                         </div>
 
-                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-10 w-10 shrink-0 bg-slate-100 border-2 border-slate-200 rounded-full flex items-center justify-center text-mscred-blue hover:border-mscred-orange transition-all overflow-hidden shadow-sm">
+                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-10 w-10 shrink-0 bg-slate-50 border-2 border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:border-mscred-orange hover:text-mscred-orange transition-all overflow-hidden shadow-sm">
                             {avatar_url && !avatarError ? (
                                 <img
                                     src={avatar_url}
@@ -130,7 +131,7 @@ export function DashboardLayout() {
                                     onError={() => setAvatarError(true)}
                                 />
                             ) : (
-                                <span className="text-sm font-bold tracking-tight">{name ? name.substring(0, 2).toUpperCase() : 'ME'}</span>
+                                <UserCircle className="w-6 h-6 shrink-0" />
                             )}
                         </Link>
 
