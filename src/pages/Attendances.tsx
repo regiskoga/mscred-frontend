@@ -33,7 +33,8 @@ export function Attendances() {
 
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const limit = 50;
+    const [limit, setLimit] = useState(50);
+    const [totalItems, setTotalItems] = useState(0);
 
     // Catalog States
     const [products, setProducts] = useState<CatalogItem[]>([]);
@@ -58,7 +59,7 @@ export function Attendances() {
 
     useEffect(() => {
         fetchAttendances();
-    }, [page]);
+    }, [page, limit]);
 
     useEffect(() => {
         fetchCatalogs();
@@ -71,6 +72,7 @@ export function Attendances() {
             setAttendances(response.data.attendances || response.data);
             if (response.data.meta) {
                 setTotalPages(response.data.meta.totalPages);
+                setTotalItems(response.data.meta.total);
             }
         } catch (error) {
             console.error('Failed to load attendances:', error);
@@ -303,7 +305,7 @@ export function Attendances() {
                             </table>
 
                             {/* Pagination Controls */}
-                            {totalPages > 1 && (
+                            {totalItems > 0 && (
                                 <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-slate-200 sm:px-6">
                                     <div className="flex-1 flex justify-between sm:hidden">
                                         <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="relative inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 transition-colors">
@@ -314,12 +316,31 @@ export function Attendances() {
                                         </button>
                                     </div>
                                     <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                                        <div>
+                                        <div className="flex items-center gap-6">
+                                            <p className="text-sm text-slate-700">
+                                                Exibindo <span className="font-medium text-mscred-blue">{attendances.length}</span> de <span className="font-medium">{totalItems}</span>
+                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm text-slate-500">Por página:</span>
+                                                <select
+                                                    value={limit}
+                                                    onChange={(e) => {
+                                                        setLimit(Number(e.target.value));
+                                                        setPage(1);
+                                                    }}
+                                                    className="border-slate-300 rounded text-sm text-slate-700 py-1 pl-2 pr-6 focus:ring-mscred-orange focus:border-mscred-orange bg-white"
+                                                >
+                                                    <option value={25}>25</option>
+                                                    <option value={50}>50</option>
+                                                    <option value={100}>100</option>
+                                                    <option value={200}>200</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4">
                                             <p className="text-sm text-slate-700">
                                                 Página <span className="font-medium text-mscred-blue">{page}</span> de <span className="font-medium">{totalPages}</span>
                                             </p>
-                                        </div>
-                                        <div>
                                             <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                                                 <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 transition-colors">
                                                     <span className="sr-only">Anterior</span>
