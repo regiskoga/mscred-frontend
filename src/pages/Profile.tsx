@@ -52,6 +52,14 @@ export function Profile() {
         }
     }
 
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+        if (value.length > 11) value = value.slice(0, 11);
+        if (value.length > 2) value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+        if (value.length > 10) value = `${value.slice(0, 10)}-${value.slice(10)}`;
+        setPhone(value);
+    };
+
     async function handleUpdate(e: React.FormEvent) {
         e.preventDefault();
         setMessage({ text: '', type: '' });
@@ -68,10 +76,17 @@ export function Profile() {
 
         try {
             setSubmitting(true);
+
+            // Fix URL protocol fallback if the user just pasted domain.com
+            let finalAvatarUrl = avatarUrl.trim();
+            if (finalAvatarUrl && !finalAvatarUrl.startsWith('http')) {
+                finalAvatarUrl = `https://${finalAvatarUrl}`;
+            }
+
             const payload: any = {
                 phone: phone.trim() || null,
                 address: address.trim() || null,
-                avatar_url: avatarUrl.trim() || null,
+                avatar_url: finalAvatarUrl || null,
             };
 
             if (password) {
@@ -84,8 +99,18 @@ export function Profile() {
             setPassword('');
             setConfirmPassword('');
 
-            // Sync local state
-            fetchProfile();
+            // Sync API state
+            await fetchProfile();
+
+            // Sync Local Storage for Frontend Topbar reflection
+            const storedUser = localStorage.getItem('@mscred:user');
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
+                parsedUser.avatar_url = payload.avatar_url;
+                localStorage.setItem('@mscred:user', JSON.stringify(parsedUser));
+                // Dispath a custom event so the layout component picks it up
+                window.dispatchEvent(new Event('mscred:profileUpdated'));
+            }
 
         } catch (err: any) {
             setMessage({ text: err.response?.data?.message || 'Erro ao atualizar dados.', type: 'error' });
@@ -178,18 +203,15 @@ export function Profile() {
                             <div className="sm:col-span-2">
                                 <label className="block text-sm font-medium text-slate-700">URL da Foto (Avatar Público)</label>
                                 <div className="mt-1 flex rounded-md shadow-sm">
-                                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-300 bg-slate-50 text-slate-500 sm:text-sm">
-                                        https://
-                                    </span>
                                     <input
-                                        type="text"
+                                        type="url"
                                         value={avatarUrl}
                                         onChange={e => setAvatarUrl(e.target.value)}
-                                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-slate-300 focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
-                                        placeholder="Link direto para imagem (Imgur, LinkedIn...)"
+                                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-md border border-slate-300 focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
+                                        placeholder="https://imgur.com/suafoto.jpg"
                                     />
                                 </div>
-                                <p className="mt-1 text-xs text-slate-500">Deixe em branco para usar as iniciais do seu nome.</p>
+                                <p className="mt-1 text-xs text-slate-500">Cole o link completo da sua imagem (Imgur, LinkedIn, etc).</p>
                             </div>
 
                             <div>
@@ -200,7 +222,8 @@ export function Profile() {
                                 <input
                                     type="text"
                                     value={phone}
-                                    onChange={e => setPhone(e.target.value)}
+                                    onChange={handlePhoneChange}
+                                    maxLength={15}
                                     className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-bmg-orange focus:border-bmg-orange sm:text-sm"
                                     placeholder="(11) 99999-9999"
                                 />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -16,16 +16,28 @@ export function DashboardLayout() {
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    // Auth State Validation (Zero-Trust Frontend)
-    const storedUser = localStorage.getItem('@mscred:user');
-    const user = storedUser ? JSON.parse(storedUser) : null;
+    // Add reactivity for Avatar updates
+    const [userData, setUserData] = useState<any>(() => {
+        const storedUser = localStorage.getItem('@mscred:user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
 
-    if (!user) {
+    useEffect(() => {
+        const handleProfileUpdate = () => {
+            const storedUser = localStorage.getItem('@mscred:user');
+            if (storedUser) setUserData(JSON.parse(storedUser));
+        };
+        window.addEventListener('mscred:profileUpdated', handleProfileUpdate);
+        return () => window.removeEventListener('mscred:profileUpdated', handleProfileUpdate);
+    }, []);
+
+    // Auth State Validation (Zero-Trust Frontend)
+    if (!userData) {
         navigate('/login', { replace: true });
-        return null; // Fallback in case PrivateRoute fails
+        return null;
     }
 
-    const { name, role } = user;
+    const { name, role, avatar_url } = userData;
 
     // RBAC Permissions
     const canManageUsers = ['ADMIN', 'GESTOR'].includes(role);
@@ -106,8 +118,16 @@ export function DashboardLayout() {
                             </span>
                         </div>
 
-                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-9 w-9 bg-bmg-orange/10 rounded-full flex items-center justify-center text-bmg-orange hover:bg-bmg-orange hover:text-white transition-colors">
-                            <UserCircle className="w-6 h-6" />
+                        <Link to="/dashboard/profile" title="Meu Perfil" className="h-9 w-9 bg-bmg-orange/10 rounded-full flex items-center justify-center text-bmg-orange hover:bg-bmg-orange hover:text-white transition-colors overflow-hidden">
+                            {avatar_url && (
+                                <img
+                                    src={avatar_url}
+                                    alt="Avatar"
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }}
+                                />
+                            )}
+                            <UserCircle className={`w-6 h-6 ${avatar_url ? 'hidden' : ''}`} />
                         </Link>
 
                         <div className="h-6 w-px bg-slate-200 mx-2"></div>
