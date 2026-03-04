@@ -103,7 +103,15 @@ export function Profile() {
         );
     }
 
-    if (!profile) return null;
+    if (!profile) {
+        return (
+            <div className="flex flex-col justify-center items-center h-64 space-y-4 animate-fade-in">
+                <ShieldAlert className="w-12 h-12 text-slate-400" />
+                <h2 className="text-xl font-bold text-slate-800">Falha ao carregar perfil</h2>
+                <p className="text-slate-500">{message.text || 'O banco de dados não encontrou seu usuário ou as migrações estão pendentes.'}</p>
+            </div>
+        );
+    }
 
     const initials = profile.name.slice(0, 2).toUpperCase();
 
