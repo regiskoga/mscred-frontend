@@ -4,6 +4,7 @@ import { DashboardLayout } from './layouts/DashboardLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Stores } from './pages/Stores';
 import { Users } from './pages/Users';
+import { Attendances } from './pages/Attendances';
 import { PrivateRoute } from './components/PrivateRoute';
 
 export function App() {
@@ -16,9 +17,9 @@ export function App() {
             <Route element={<PrivateRoute />}>
                 <Route element={<DashboardLayout />}>
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/dashboard/attendances" element={<Attendances />} />
                     <Route path="/dashboard/stores" element={<Stores />} />
                     <Route path="/dashboard/users" element={<Users />} />
-                    {/* Futuras rotas aqui (e.g. /dashboard/attendances) */}
                 </Route>
             </Route>
         </Routes>
