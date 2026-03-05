@@ -7,6 +7,7 @@ export interface CatalogItem {
     id: number;
     name: string;
     active: boolean;
+    sort_order: number;
     created_at: string;
     updated_at: string;
 }
@@ -23,13 +24,13 @@ export const catalogsApi = {
     },
 
     // Cria usando o formato do DB (com underscore) esperado pelo Fastify Controller param
-    async createItem(type: CatalogTypeDb, name: string) {
-        const response = await api.post(`/catalogs/${type}`, { name });
+    async createItem(type: CatalogTypeDb, name: string, extraData: any = {}) {
+        const response = await api.post(`/catalogs/${type}`, { name, ...extraData });
         return response.data;
     },
 
-    async updateItem(type: CatalogTypeDb, id: number, name: string) {
-        const response = await api.put(`/catalogs/${type}/${id}`, { name });
+    async updateItem(type: CatalogTypeDb, id: number, name: string, extraData: any = {}) {
+        const response = await api.put(`/catalogs/${type}/${id}`, { name, ...extraData });
         return response.data;
     },
 

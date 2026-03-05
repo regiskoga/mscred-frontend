@@ -29,6 +29,7 @@ export function Catalogs() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<CatalogItem | null>(null);
     const [itemName, setItemName] = useState('');
+    const [itemOrder, setItemOrder] = useState<number>(0);
     const [saving, setSaving] = useState(false);
 
     // Migration state
@@ -84,9 +85,11 @@ export function Catalogs() {
         if (item) {
             setEditingItem(item);
             setItemName(item.name);
+            setItemOrder(item.sort_order || 0);
         } else {
             setEditingItem(null);
             setItemName('');
+            setItemOrder(0);
         }
         setIsModalOpen(true);
     };
@@ -95,6 +98,7 @@ export function Catalogs() {
         setIsModalOpen(false);
         setEditingItem(null);
         setItemName('');
+        setItemOrder(0);
     };
 
     const handleSave = async (e: React.FormEvent) => {
@@ -103,10 +107,15 @@ export function Catalogs() {
 
         try {
             setSaving(true);
+            const extraData: any = {};
+            if (activeTab.dbType === 'products') {
+                extraData.sort_order = itemOrder;
+            }
+
             if (editingItem) {
-                await catalogsApi.updateItem(activeTab.dbType, editingItem.id, itemName);
+                await catalogsApi.updateItem(activeTab.dbType, editingItem.id, itemName, extraData);
             } else {
-                await catalogsApi.createItem(activeTab.dbType, itemName);
+                await catalogsApi.createItem(activeTab.dbType, itemName, extraData);
             }
             await fetchData(activeTab.endpoint);
             closeModal();
@@ -384,6 +393,9 @@ export function Catalogs() {
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-32 text-center">
                                     Status
                                 </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-20 text-center">
+                                    Ordem
+                                </th>
                                 <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                     Ações
                                 </th>
@@ -427,6 +439,9 @@ export function Catalogs() {
                                             >
                                                 {item.active ? 'Ativo' : 'Inativo'}
                                             </button>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-slate-500 font-mono">
+                                            {item.sort_order || 0}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
@@ -483,6 +498,25 @@ export function Catalogs() {
                                         autoFocus
                                     />
                                 </div>
+
+                                {activeTab.id === 'products' && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700">
+                                            Ordem de Exibição (Dashboard)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={itemOrder}
+                                            onChange={(e) => setItemOrder(parseInt(e.target.value, 10) || 0)}
+                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm"
+                                            placeholder="Ex: 1"
+                                            min="0"
+                                        />
+                                        <p className="mt-1 text-[10px] text-slate-400 font-medium italic">
+                                            Produtos com menor número aparecem primeiro no resumo de vendas.
+                                        </p>
+                                    </div>
+                                )}
 
                                 <div className="pt-4 flex sm:flex-row-reverse gap-3">
                                     <button
