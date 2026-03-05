@@ -61,11 +61,11 @@ export function GoalsManagement() {
             const [prods, strs, usrs] = await Promise.all([
                 catalogsApi.getItems('products'),
                 api.get('/stores').then((res: any) => res.data),
-                api.get('/users').then((res: any) => res.data.users || res.data) // Depende de como a API paginou, fallback genérico
+                api.get('/users').then((res: any) => res.data)
             ]);
-            setProducts(prods.filter((p: any) => p.active !== false)); // Considerar apenas ativos se aplicável
-            setStores(strs);
-            setUsers(Array.isArray(usrs) ? usrs : []);
+            setProducts(Array.isArray(prods) ? prods.filter((p: any) => p.active !== false) : []);
+            setStores(Array.isArray(strs) ? strs : (strs?.stores || strs?.data || []));
+            setUsers(Array.isArray(usrs) ? usrs : (usrs?.users || usrs?.data || []));
             await loadGoals();
         } catch (err: any) {
             setError('Erro ao carregar dados auxiliares. ' + err.message);
