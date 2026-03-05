@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Calendar, CheckCircle, TrendingUp, Target, Award, ArrowUpRight, Clock, AlertCircle, RefreshCw } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, Target, Award, ArrowUpRight, Clock, AlertCircle, RefreshCw, BarChart3, LineChart as LineChartIcon } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import { dashboardAPI, DashboardMetricsResponse } from '../lib/api/dashboard';
 import { api } from '../lib/axios';
 
@@ -279,6 +280,105 @@ export function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Evolução Histórica (Gráficos) - Apenas para Gestores e Admins */}
+            {(isAdmin || isGestor) && metrics.monthlyEvolution && (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+                    {/* Evolução por Produto */}
+                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-mscred-orange/10 rounded-lg text-mscred-orange">
+                                <LineChartIcon className="w-5 h-5" />
+                            </div>
+                            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Evolução por Produto</h2>
+                        </div>
+
+                        <div className="h-80 w-full overflow-hidden">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={metrics.monthlyEvolution.products} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                    <XAxis
+                                        dataKey="month"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        dy={10}
+                                    />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                        tickFormatter={(value) => `R$ ${value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value}`}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                        formatter={(value: any) => formatCurrency(value)}
+                                    />
+                                    <Legend iconType="circle" />
+                                    {metrics.monthlyEvolution.productNames.map((name, index) => (
+                                        <Line
+                                            key={name}
+                                            type="monotone"
+                                            dataKey={name}
+                                            stroke={['#FFD700', '#6495ED', '#FF8C00', '#FFA500', '#FF4500', '#D2691E'][index % 6]}
+                                            strokeWidth={3}
+                                            dot={{ r: 4, strokeWidth: 2, fill: '#fff' }}
+                                            activeDot={{ r: 6, strokeWidth: 0 }}
+                                            animationDuration={1500}
+                                        />
+                                    ))}
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+
+                    {/* Evolução por Colaborador */}
+                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-mscred-blue/10 rounded-lg text-mscred-blue">
+                                <BarChart3 className="w-5 h-5" />
+                            </div>
+                            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Evolução por Colaborador</h2>
+                        </div>
+
+                        <div className="h-80 w-full overflow-hidden">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={metrics.monthlyEvolution.consultants} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                    <XAxis
+                                        dataKey="month"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        dy={10}
+                                    />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                        tickFormatter={(value) => `R$ ${value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value}`}
+                                    />
+                                    <Tooltip
+                                        cursor={{ fill: '#f8fafc' }}
+                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                        formatter={(value: any) => formatCurrency(value)}
+                                    />
+                                    <Legend iconType="rect" />
+                                    {metrics.monthlyEvolution.consultantNames.map((name, index) => (
+                                        <Bar
+                                            key={name}
+                                            dataKey={name}
+                                            fill={['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'][index % 6]}
+                                            radius={[4, 4, 0, 0]}
+                                            animationDuration={1500}
+                                        />
+                                    ))}
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Metas dos Produtos */}
             <div>

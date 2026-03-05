@@ -28,11 +28,19 @@ export interface SalesByProduct {
     count: number;
 }
 
+export interface MonthlyEvolution {
+    products: any[];
+    consultants: any[];
+    productNames: string[];
+    consultantNames: string[];
+}
+
 export interface DashboardMetricsResponse {
     workingDays: WorkingDaysMetrics;
     financialTotals: FinancialTotals;
     goalsProgress: GoalProgress[];
     salesByProduct: SalesByProduct[];
+    monthlyEvolution: MonthlyEvolution;
 }
 
 export const dashboardAPI = {
