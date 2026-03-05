@@ -28,10 +28,13 @@ export interface DashboardMetricsResponse {
 }
 
 export const dashboardAPI = {
-    getMetrics: async (month?: number, year?: number) => {
+    getMetrics: async (month?: number, year?: number, consultantId?: string, targetStoreId?: number) => {
         const params: any = {};
         if (month) params.month = month;
         if (year) params.year = year;
+        if (consultantId) params.consultantId = consultantId;
+        if (targetStoreId) params.targetStoreId = targetStoreId;
+
         const response = await api.get<DashboardMetricsResponse>('/dashboard/metrics', { params });
         return response.data;
     }

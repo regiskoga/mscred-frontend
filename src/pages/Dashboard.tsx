@@ -1,37 +1,72 @@
 import { useState, useEffect } from 'react';
-import { Calendar, CheckCircle, TrendingUp, Target, Award, ArrowUpRight, Clock, AlertCircle } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, Target, Award, ArrowUpRight, Clock, AlertCircle, RefreshCw } from 'lucide-react';
 import { dashboardAPI, DashboardMetricsResponse } from '../lib/api/dashboard';
+import { api } from '../lib/axios';
 
 export function Dashboard() {
     const storedUser = localStorage.getItem('@mscred:user');
-    const user = storedUser ? JSON.parse(storedUser) : { name: 'Consultor' };
+    const user = storedUser ? JSON.parse(storedUser) : { name: 'Consultor', role: 'OPERADOR' };
 
     const [metrics, setMetrics] = useState<DashboardMetricsResponse | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     // Default to current Month and Year
-    const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1);
-    const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+    // Filtros de Admin/Gestor
+    const [consultants, setConsultants] = useState<any[]>([]);
+    const [stores, setStores] = useState<any[]>([]);
+    const [selectedConsultantId, setSelectedConsultantId] = useState('');
+    const [selectedStoreId, setSelectedStoreId] = useState('');
+
+    const isAdmin = user.role === 'ADMIN';
+    const isGestor = user.role === 'GESTOR';
 
     useEffect(() => {
-        loadMetrics();
-    }, [selectedMonth, selectedYear]);
+        if (isAdmin || isGestor) {
+            fetchFilters();
+        }
+    }, [isAdmin, isGestor]);
 
-    async function loadMetrics() {
+    async function fetchFilters() {
         try {
-            setIsLoading(true);
-            const data = await dashboardAPI.getMetrics(selectedMonth, selectedYear);
+            const [usersRes, storesRes] = await Promise.all([
+                api.get('/users'),
+                api.get('/stores')
+            ]);
+            setConsultants(usersRes.data.users || usersRes.data);
+            setStores(storesRes.data.stores || storesRes.data);
+        } catch (err) {
+            console.error('Erro ao carregar filtros:', err);
+        }
+    }
+
+    const fetchMetrics = async () => {
+        try {
+            setLoading(true);
+            setError('');
+            const data = await dashboardAPI.getMetrics(
+                selectedMonth,
+                selectedYear,
+                selectedConsultantId || undefined,
+                selectedStoreId ? Number(selectedStoreId) : undefined
+            );
             setMetrics(data);
         } catch (err: any) {
             setError('Não foi possível carregar as métricas neste momento.');
             console.error(err);
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
-    }
+    };
 
-    if (isLoading) {
+    useEffect(() => {
+        fetchMetrics();
+    }, [selectedMonth, selectedYear, selectedConsultantId, selectedStoreId]);
+
+    if (loading) {
         return (
             <div className="flex h-[80vh] items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
@@ -49,7 +84,7 @@ export function Dashboard() {
                     <AlertCircle className="w-10 h-10" />
                     <h3 className="font-bold">Erro de Sincronização</h3>
                     <p className="text-sm">{error}</p>
-                    <button onClick={loadMetrics} className="mt-4 px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors text-sm font-semibold">Tentar Novamente</button>
+                    <button onClick={fetchMetrics} className="mt-4 px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors text-sm font-semibold">Tentar Novamente</button>
                 </div>
             </div>
         );
@@ -80,8 +115,39 @@ export function Dashboard() {
                         Bem-vindo ao seu painel financeiro, <span className="font-semibold text-white">{user.name}</span>.
                     </p>
                 </div>
-                <div className="relative z-10 text-right">
-                    <p className="text-sm text-slate-400 mb-2">Período de Análise</p>
+                <div className="relative z-10 text-right space-y-3">
+                    <div className="flex items-center justify-end gap-3 mb-1">
+                        <button onClick={fetchMetrics} className="p-2 bg-white/10 rounded-xl text-slate-300 hover:text-mscred-orange transition-all border border-white/5" title="Atualizar">
+                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                        </button>
+
+                        {(isAdmin || isGestor) && (
+                            <div className="flex gap-2">
+                                {isAdmin && (
+                                    <select
+                                        value={selectedStoreId}
+                                        onChange={e => { setSelectedStoreId(e.target.value); setSelectedConsultantId(''); }}
+                                        className="bg-white/10 border-white/10 text-white rounded-xl text-xs py-1.5 focus:ring-mscred-orange focus:border-mscred-orange backdrop-blur-md"
+                                    >
+                                        <option value="" className="text-slate-800">Unidade: Todas</option>
+                                        {stores.map(s => <option key={s.id} value={s.id} className="text-slate-800">{s.name}</option>)}
+                                    </select>
+                                )}
+                                <select
+                                    value={selectedConsultantId}
+                                    onChange={e => setSelectedConsultantId(e.target.value)}
+                                    className="bg-white/10 border-white/10 text-white rounded-xl text-xs py-1.5 focus:ring-mscred-orange focus:border-mscred-orange backdrop-blur-md"
+                                >
+                                    <option value="" className="text-slate-800">{isAdmin ? 'Consultor: Todos' : 'Meus Consultores'}</option>
+                                    {consultants
+                                        .filter(c => !selectedStoreId || c.store_id === Number(selectedStoreId))
+                                        .map(c => <option key={c.id} value={c.id} className="text-slate-800">{c.name}</option>)
+                                    }
+                                </select>
+                            </div>
+                        )}
+                    </div>
+
                     <div className="inline-flex items-center gap-2 bg-white/10 p-1.5 rounded-xl backdrop-blur-md border border-white/10 overflow-hidden">
                         <div className="flex items-center justify-center pl-2 pr-3 py-1 border-r border-white/10">
                             <Calendar className="w-4 h-4 text-mscred-orange mr-2" />
