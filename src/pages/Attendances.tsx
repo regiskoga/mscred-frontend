@@ -91,10 +91,16 @@ export function Attendances() {
                 api.get('/catalogs/sales-channels'),
             ]);
 
-            setProducts(Array.isArray(prodRes.data?.products) ? prodRes.data.products : (Array.isArray(prodRes.data) ? prodRes.data : []));
-            setOperationTypes(Array.isArray(opRes.data?.operation_types) ? opRes.data.operation_types : (Array.isArray(opRes.data) ? opRes.data : []));
-            setAttendanceStatuses(Array.isArray(statusRes.data?.attendance_statuses) ? statusRes.data.attendance_statuses : (Array.isArray(statusRes.data) ? statusRes.data : []));
-            setSalesChannels(Array.isArray(channelRes.data?.sales_channels) ? channelRes.data.sales_channels : (Array.isArray(channelRes.data) ? channelRes.data : []));
+            setProducts(Array.isArray(prodRes.data?.products) ? prodRes.data.products : []);
+
+            const ops = opRes.data?.operationTypes || opRes.data?.operation_types || [];
+            setOperationTypes(Array.isArray(ops) ? ops : []);
+
+            const sts = statusRes.data?.attendanceStatuses || statusRes.data?.attendance_statuses || [];
+            setAttendanceStatuses(Array.isArray(sts) ? sts : []);
+
+            const chs = channelRes.data?.salesChannels || channelRes.data?.sales_channels || [];
+            setSalesChannels(Array.isArray(chs) ? chs : []);
         } catch (error) {
             console.error('Failed to load catalogs:', error);
         }
