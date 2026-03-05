@@ -3,7 +3,7 @@ import { Target, TrendingUp, Plus, Trash2, Edit2, AlertCircle, Save, X } from 'l
 import { goalsAPI, Goal } from '../lib/api/goals';
 import { tiersAPI, CommissionTier } from '../lib/api/tiers';
 import { catalogsApi, CatalogItem } from '../lib/api/catalogs';
-import { api } from '../lib/api/axios';
+import { api } from '../lib/axios';
 
 interface UserItem { id: string; name: string; role: string }
 interface StoreItem { id: number; name: string }
@@ -60,8 +60,8 @@ export function GoalsManagement() {
             setIsLoading(true);
             const [prods, strs, usrs] = await Promise.all([
                 catalogsApi.getItems('products'),
-                api.get('/stores').then(res => res.data),
-                api.get('/users').then(res => res.data.users || res.data) // Depende de como a API paginou, fallback genérico
+                api.get('/stores').then((res: any) => res.data),
+                api.get('/users').then((res: any) => res.data.users || res.data) // Depende de como a API paginou, fallback genérico
             ]);
             setProducts(prods.filter((p: any) => p.active !== false)); // Considerar apenas ativos se aplicável
             setStores(strs);
@@ -193,8 +193,8 @@ export function GoalsManagement() {
                         <button
                             onClick={() => setActiveTab('goals')}
                             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all ${activeTab === 'goals'
-                                    ? 'border-indigo-500 text-indigo-600'
-                                    : 'border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-indigo-500 text-indigo-600'
+                                : 'border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             <span className="flex items-center gap-2"><Target className="w-4 h-4" /> Metas de Vendas (Mensal)</span>
@@ -202,8 +202,8 @@ export function GoalsManagement() {
                         <button
                             onClick={() => setActiveTab('tiers')}
                             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all ${activeTab === 'tiers'
-                                    ? 'border-indigo-500 text-indigo-600'
-                                    : 'border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-indigo-500 text-indigo-600'
+                                : 'border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             <span className="flex items-center gap-2"><TrendingUp className="w-4 h-4" /> Faixas de Comissionamento</span>
