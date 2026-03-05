@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { catalogsApi, CatalogItem, CatalogTypeDb, CatalogTypeEndpoint } from '../lib/api/catalogs';
 import { integrationsApi, SyncStats } from '../lib/api/integrations';
 import { api } from '../lib/axios';
-import { Settings, Plus, Edit2, X, Loader2, AlertCircle, Database, Save, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Settings, Plus, Edit2, X, Loader2, AlertCircle, Database, Save, RefreshCw, CheckCircle2, ExternalLink } from 'lucide-react';
 
 interface TabConfig {
     id: string;
@@ -263,16 +263,29 @@ export function Catalogs() {
                                         onChange={(e) => setSheetId(e.target.value)}
                                         className="flex-1 border border-slate-300 rounded-lg py-2 px-3 focus:ring-mscred-orange focus:border-mscred-orange text-sm font-mono"
                                     />
+                                    {sheetId && sheetId.length > 10 && (
+                                        <a
+                                            href={`https://docs.google.com/spreadsheets/d/${sheetId}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-3 py-2 border border-slate-200 rounded-lg text-slate-600 hover:text-mscred-orange hover:border-mscred-orange transition-all bg-white shadow-sm"
+                                            title="Abrir Planilha no Google Sheets"
+                                        >
+                                            <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                    )}
                                     <button
                                         onClick={handleSaveSheetId}
                                         disabled={saving || !selectedUserId || !sheetId}
                                         className="inline-flex items-center px-3 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-mscred-blue hover:bg-blue-700 focus:outline-none disabled:opacity-50"
+                                        title="Salvar ID da Planilha"
                                     >
                                         <Save className={`w-4 h-4 ${saving ? 'animate-spin' : ''}`} />
                                     </button>
                                 </div>
-                                <p className="mt-2 text-xs text-slate-500">
-                                    Dica: O ID está na URL da planilha, entre '/d/' e '/edit'. A planilha deve ser pública ou compartilhada para exportação.
+                                <p className="mt-2 text-[11px] text-slate-500 leading-relaxed">
+                                    O ID está na URL da planilha, entre <span className="font-mono text-mscred-blue">/d/</span> e <span className="font-mono text-mscred-blue">/edit</span>.
+                                    {sheetId && <span className="block mt-1 font-semibold text-mscred-orange">Planilha detectada! Use o ícone acima para conferir o acesso.</span>}
                                 </p>
                             </div>
                         </div>
