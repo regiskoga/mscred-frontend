@@ -1,6 +1,10 @@
 # Stage 1: Build the Vite Application
 FROM node:20-alpine AS builder
 
+# SecOps & Build Config: Aceitar variáveis injetadas pelo orquestrador (Coolify)
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN export NODE_ENV=development && npm install
