@@ -22,6 +22,8 @@ interface Attendance {
     origin_bank: string | null;
     user: { name: string };
     store: { name: string };
+    contract_value: number;
+    commission_value: number;
     created_at: string;
 }
 
@@ -54,6 +56,7 @@ export function Attendances() {
     const [paidApproved, setPaidApproved] = useState(false);
     const [city, setCity] = useState('');
     const [originBank, setOriginBank] = useState('');
+    const [contractValue, setContractValue] = useState<string>('');
 
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -129,6 +132,7 @@ export function Attendances() {
         setPaidApproved(attendance.paid_approved);
         setCity(attendance.city || '');
         setOriginBank(attendance.origin_bank || '');
+        setContractValue(attendance.contract_value ? attendance.contract_value.toString() : '');
         setIsModalOpen(true);
     };
 
@@ -144,6 +148,7 @@ export function Attendances() {
         setPaidApproved(false);
         setCity('');
         setOriginBank('');
+        setContractValue('');
         setIsModalOpen(true);
     };
 
@@ -169,6 +174,7 @@ export function Attendances() {
                 paid_approved: paidApproved,
                 city,
                 origin_bank: originBank.trim() || undefined,
+                contract_value: contractValue ? parseFloat(contractValue.replace(',', '.')) : 0,
             };
 
             if (editingId) {
@@ -191,6 +197,7 @@ export function Attendances() {
             setPaidApproved(false);
             setCity('');
             setOriginBank('');
+            setContractValue('');
         } catch (err: any) {
             // Tratamento robusto para Admins que tentam registrar venda sem Store vinculada (Abort)
             setError(err.response?.data?.message || 'Erro ao registrar atendimento. Valide os campos.');
@@ -266,6 +273,9 @@ export function Attendances() {
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                             Status
                                         </th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                            Valor & Receita
+                                        </th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">
                                             Origem (Loja & Op)
                                         </th>
@@ -328,6 +338,14 @@ export function Attendances() {
                                                             <CheckCircle className="w-4 h-4" />
                                                         </span>
                                                     )}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-semibold text-slate-900">
+                                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(a.contract_value || 0)}
+                                                    </div>
+                                                    <div className="text-xs font-medium text-emerald-600 mt-0.5">
+                                                        Comissão: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(a.commission_value || 0)}
+                                                    </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                                                     <div className="text-sm text-slate-900">
@@ -547,7 +565,18 @@ export function Attendances() {
 
                                 {/* Seção 3: Finalização */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                                    <h4 className="text-sm font-semibold text-slate-800 mb-3 uppercase tracking-wide">Financeiro & Status</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Valor do Contrato (R$)</label>
+                                            <input
+                                                type="text"
+                                                value={contractValue}
+                                                onChange={(e) => setContractValue(e.target.value.replace(/[^0-9.,]/g, ''))}
+                                                placeholder="0.00"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-mscred-orange focus:border-mscred-orange sm:text-sm font-mono"
+                                            />
+                                        </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700">Status Atual do Funil</label>
                                             <select
@@ -560,7 +589,7 @@ export function Attendances() {
                                                 {attendanceStatuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                                             </select>
                                         </div>
-                                        <div className="flex items-center mt-5">
+                                        <div className="flex items-center mt-3 md:mt-2 md:col-span-2">
                                             <input
                                                 id="paid"
                                                 type="checkbox"
@@ -569,8 +598,7 @@ export function Attendances() {
                                                 className="w-5 h-5 text-mscred-orange border-slate-300 rounded focus:ring-mscred-orange"
                                             />
                                             <label htmlFor="paid" className="ml-3 block text-sm font-medium text-slate-900">
-                                                Comissão / Pago Aprovado
-                                                <p className="font-normal text-slate-500 text-xs">Marcar caso a transação já tenha rendido lucro.</p>
+                                                Aprovado / Pago (Marca que a transação rendeu lucro)
                                             </label>
                                         </div>
                                     </div>
