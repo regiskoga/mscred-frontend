@@ -9,20 +9,19 @@ export function Dashboard() {
     const [metrics, setMetrics] = useState<DashboardMetricsResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
-    const [selectedDate, setSelectedDate] = useState(() => {
-        const now = new Date();
-        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    });
+
+    // Default to current Month and Year
+    const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1);
+    const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
 
     useEffect(() => {
         loadMetrics();
-    }, [selectedDate]);
+    }, [selectedMonth, selectedYear]);
 
     async function loadMetrics() {
         try {
             setIsLoading(true);
-            const [yearStr, monthStr] = selectedDate.split('-');
-            const data = await dashboardAPI.getMetrics(parseInt(monthStr, 10), parseInt(yearStr, 10));
+            const data = await dashboardAPI.getMetrics(selectedMonth, selectedYear);
             setMetrics(data);
         } catch (err: any) {
             setError('Não foi possível carregar as métricas neste momento.');
@@ -60,6 +59,14 @@ export function Dashboard() {
 
     const formatCurrency = (val: number) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+    const monthNames = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i); // -2 to +2 years
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header Área */}
@@ -80,13 +87,27 @@ export function Dashboard() {
                             <Calendar className="w-4 h-4 text-mscred-orange mr-2" />
                             <span className="font-medium text-sm whitespace-nowrap">{workingDays.elapsed} de {workingDays.total} dias úteis</span>
                         </div>
-                        <input
-                            type="month"
-                            className="bg-transparent border-none text-white focus:ring-0 text-sm font-semibold outline-none w-[130px] [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert cursor-pointer"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            title="Escolha o mês de referência"
-                        />
+                        <div className="flex items-center">
+                            <select
+                                className="bg-transparent border-none text-white focus:ring-0 text-sm font-semibold outline-none cursor-pointer appearance-none px-2"
+                                value={selectedMonth}
+                                onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                            >
+                                {monthNames.map((m, idx) => (
+                                    <option key={m} value={idx + 1} className="text-slate-800">{m}</option>
+                                ))}
+                            </select>
+                            <span className="text-white/50">/</span>
+                            <select
+                                className="bg-transparent border-none text-white focus:ring-0 text-sm font-semibold outline-none cursor-pointer appearance-none px-2"
+                                value={selectedYear}
+                                onChange={(e) => setSelectedYear(Number(e.target.value))}
+                            >
+                                {years.map(y => (
+                                    <option key={y} value={y} className="text-slate-800">{y}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
