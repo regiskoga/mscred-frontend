@@ -286,44 +286,54 @@ export function Dashboard() {
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
                     {/* Evolução por Produto */}
                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-mscred-orange/10 rounded-lg text-mscred-orange">
-                                <LineChartIcon className="w-5 h-5" />
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-mscred-orange/10 rounded-lg text-mscred-orange">
+                                    <TrendingUp className="w-5 h-5" />
+                                </div>
+                                <h2 className="text-lg font-bold text-slate-800">Evolução por Produto</h2>
                             </div>
-                            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Evolução por Produto</h2>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Últimos 6 meses</span>
                         </div>
 
                         <div className="h-80 w-full overflow-hidden">
                             <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={metrics.monthlyEvolution.products} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <LineChart data={metrics.monthlyEvolution.products} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis
                                         dataKey="month"
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                                         dy={10}
                                     />
                                     <YAxis
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: '#94a3b8', fontSize: 12 }}
-                                        tickFormatter={(value) => `R$ ${value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value}`}
+                                        tick={{ fill: '#94a3b8', fontSize: 10 }}
+                                        tickFormatter={(value) => value === 0 ? '0' : `R$ ${(value / 1000).toFixed(0)}k`}
                                     />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '11px' }}
                                         formatter={(value: any) => formatCurrency(value)}
+                                        cursor={{ stroke: '#cbd5e1', strokeWidth: 1 }}
                                     />
-                                    <Legend iconType="circle" />
+                                    <Legend
+                                        iconType="circle"
+                                        verticalAlign="bottom"
+                                        height={40}
+                                        iconSize={8}
+                                        wrapperStyle={{ fontSize: '9px', paddingTop: '15px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}
+                                    />
                                     {metrics.monthlyEvolution.productNames.map((name, index) => (
                                         <Line
                                             key={name}
                                             type="monotone"
                                             dataKey={name}
-                                            stroke={['#FFD700', '#6495ED', '#FF8C00', '#FFA500', '#FF4500', '#D2691E'][index % 6]}
+                                            stroke={['#F59E0B', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#22C55E'][index % 8]}
                                             strokeWidth={3}
-                                            dot={{ r: 4, strokeWidth: 2, fill: '#fff' }}
-                                            activeDot={{ r: 6, strokeWidth: 0 }}
+                                            dot={{ r: 2, strokeWidth: 2, fill: '#fff' }}
+                                            activeDot={{ r: 4, strokeWidth: 0, fill: '#F59E0B' }}
                                             animationDuration={1500}
                                         />
                                     ))}
@@ -332,44 +342,53 @@ export function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Evolução por Colaborador */}
+                    {/* Evolução por Operador */}
                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-mscred-blue/10 rounded-lg text-mscred-blue">
-                                <BarChart3 className="w-5 h-5" />
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-mscred-blue/10 rounded-lg text-mscred-blue">
+                                    <UsersIcon className="w-5 h-5" />
+                                </div>
+                                <h2 className="text-lg font-bold text-slate-800">Performance (Operadores)</h2>
                             </div>
-                            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Evolução por Colaborador</h2>
+                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-black tracking-widest uppercase">Operadores Ativos</span>
                         </div>
 
                         <div className="h-80 w-full overflow-hidden">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={metrics.monthlyEvolution.consultants} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <BarChart data={metrics.monthlyEvolution.consultants} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis
                                         dataKey="month"
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                                         dy={10}
                                     />
                                     <YAxis
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: '#94a3b8', fontSize: 12 }}
-                                        tickFormatter={(value) => `R$ ${value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value}`}
+                                        tick={{ fill: '#94a3b8', fontSize: 10 }}
+                                        tickFormatter={(value) => value === 0 ? '0' : `R$ ${(value / 1000).toFixed(0)}k`}
                                     />
                                     <Tooltip
-                                        cursor={{ fill: '#f8fafc' }}
-                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                        cursor={{ fill: '#f8fafc', radius: 4 }}
+                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '11px' }}
                                         formatter={(value: any) => formatCurrency(value)}
                                     />
-                                    <Legend iconType="rect" />
+                                    <Legend
+                                        iconType="rect"
+                                        verticalAlign="bottom"
+                                        height={40}
+                                        iconSize={8}
+                                        wrapperStyle={{ fontSize: '9px', paddingTop: '15px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}
+                                    />
                                     {metrics.monthlyEvolution.consultantNames.map((name, index) => (
                                         <Bar
                                             key={name}
                                             dataKey={name}
-                                            fill={['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'][index % 6]}
-                                            radius={[4, 4, 0, 0]}
+                                            fill={['#3B82F6', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#22C55E'][index % 8]}
+                                            radius={[3, 3, 0, 0]}
                                             animationDuration={1500}
                                         />
                                     ))}
