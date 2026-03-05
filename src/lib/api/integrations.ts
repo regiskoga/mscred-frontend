@@ -5,6 +5,7 @@ export interface SyncStats {
     skipped: number;
     errors: number;
     errorDetails?: string[];
+    mappedColumns?: { [key: string]: boolean };
 }
 
 export interface SyncResponse {
