@@ -9,15 +9,20 @@ export function Dashboard() {
     const [metrics, setMetrics] = useState<DashboardMetricsResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    });
 
     useEffect(() => {
         loadMetrics();
-    }, []);
+    }, [selectedDate]);
 
     async function loadMetrics() {
         try {
             setIsLoading(true);
-            const data = await dashboardAPI.getMetrics();
+            const [yearStr, monthStr] = selectedDate.split('-');
+            const data = await dashboardAPI.getMetrics(parseInt(monthStr, 10), parseInt(yearStr, 10));
             setMetrics(data);
         } catch (err: any) {
             setError('Não foi possível carregar as métricas neste momento.');
@@ -69,10 +74,19 @@ export function Dashboard() {
                     </p>
                 </div>
                 <div className="relative z-10 text-right">
-                    <p className="text-sm text-slate-400 mb-1">Status do Mês</p>
-                    <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10">
-                        <Calendar className="w-4 h-4 text-mscred-orange" />
-                        <span className="font-medium">{workingDays.elapsed} de {workingDays.total} dias úteis</span>
+                    <p className="text-sm text-slate-400 mb-2">Período de Análise</p>
+                    <div className="inline-flex items-center gap-2 bg-white/10 p-1.5 rounded-xl backdrop-blur-md border border-white/10 overflow-hidden">
+                        <div className="flex items-center justify-center pl-2 pr-3 py-1 border-r border-white/10">
+                            <Calendar className="w-4 h-4 text-mscred-orange mr-2" />
+                            <span className="font-medium text-sm whitespace-nowrap">{workingDays.elapsed} de {workingDays.total} dias úteis</span>
+                        </div>
+                        <input
+                            type="month"
+                            className="bg-transparent border-none text-white focus:ring-0 text-sm font-semibold outline-none w-[130px] [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert cursor-pointer"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            title="Escolha o mês de referência"
+                        />
                     </div>
                 </div>
             </div>
@@ -163,8 +177,8 @@ export function Dashboard() {
                                         </div>
                                         {/* Status Badge */}
                                         <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 border ${isAchieved
-                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                                : 'bg-indigo-50 text-indigo-700 border-indigo-100'
+                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                            : 'bg-indigo-50 text-indigo-700 border-indigo-100'
                                             }`}>
                                             {isAchieved ? <CheckCircle className="w-3.5 h-3.5" /> : <ArrowUpRight className="w-3.5 h-3.5" />}
                                             {isAchieved ? 'Meta Atingida!' : 'Em Progresso'}

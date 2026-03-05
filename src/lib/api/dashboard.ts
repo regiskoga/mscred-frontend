@@ -28,8 +28,11 @@ export interface DashboardMetricsResponse {
 }
 
 export const dashboardAPI = {
-    getMetrics: async () => {
-        const response = await api.get<DashboardMetricsResponse>('/dashboard/metrics');
+    getMetrics: async (month?: number, year?: number) => {
+        const params: any = {};
+        if (month) params.month = month;
+        if (year) params.year = year;
+        const response = await api.get<DashboardMetricsResponse>('/dashboard/metrics', { params });
         return response.data;
     }
 };
