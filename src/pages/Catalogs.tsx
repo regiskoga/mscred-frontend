@@ -340,6 +340,19 @@ export function Catalogs() {
                                         </ul>
                                     </div>
                                 )}
+
+                                {syncResult.stats.mappedColumns && (
+                                    <div className="mt-4 pt-4 border-t border-emerald-200">
+                                        <p className="text-sm font-medium text-slate-800 mb-2">Mapeamento de Colunas:</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {Object.entries(syncResult.stats.mappedColumns).map(([col, found]) => (
+                                                <div key={col} className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border ${found ? 'bg-emerald-100 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-100 text-red-500'}`}>
+                                                    {col}: {found ? 'OK' : 'NÃO ENCONTRADA'}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
