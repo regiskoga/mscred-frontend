@@ -36,6 +36,7 @@ export function Catalogs() {
     const [selectedUserId, setSelectedUserId] = useState('');
     const [sheetId, setSheetId] = useState('');
     const [syncing, setSyncing] = useState(false);
+    const [clearing, setClearing] = useState(false);
     const [syncResult, setSyncResult] = useState<{ message: string, stats: SyncStats } | null>(null);
 
     useEffect(() => {
@@ -151,6 +152,22 @@ export function Catalogs() {
             setError(err.response?.data?.message || 'Erro ao sincronizar dados.');
         } finally {
             setSyncing(false);
+        }
+    };
+
+    const handleClearSync = async () => {
+        if (!selectedUserId) return;
+        if (!confirm('Cuidado: Todos os atendimentos (Tickets) importados via Planilha para este Colaborador serão excluídos definitivamente. Deseja processar o Rollback?')) return;
+        try {
+            setClearing(true);
+            setSyncResult(null);
+            const result = await integrationsApi.clearSync(selectedUserId);
+            // Reusing syncResult UI to show success
+            setSyncResult({ message: result.message, stats: { created: 0, skipped: 0, errors: 0 } });
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Erro ao excluir as importações.');
+        } finally {
+            setClearing(false);
         }
     };
 
@@ -272,13 +289,23 @@ export function Catalogs() {
                             </p>
                         </div>
 
-                        <button
-                            onClick={handleSync}
-                            disabled={syncing || !selectedUserId || !sheetId}
-                            className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-base font-medium text-white bg-mscred-orange hover:bg-orange-600 focus:outline-none disabled:opacity-50 transition-all transform hover:scale-105 active:scale-95"
-                        >
-                            {syncing ? 'Sincronizando...' : 'Sincronizar Agora'}
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-3 mt-4 w-full">
+                            <button
+                                onClick={handleSync}
+                                disabled={syncing || clearing || !selectedUserId || !sheetId}
+                                className="flex-1 inline-flex justify-center items-center px-4 py-3 border border-transparent rounded-xl shadow-sm text-sm sm:text-base font-medium text-white bg-mscred-orange hover:bg-orange-600 focus:outline-none disabled:opacity-50 transition-all"
+                            >
+                                {syncing ? 'Sincronizando...' : 'Sincronizar Agora'}
+                            </button>
+                            <button
+                                onClick={handleClearSync}
+                                disabled={syncing || clearing || !selectedUserId}
+                                className="flex-1 inline-flex justify-center items-center px-4 py-3 border border-red-200 rounded-xl shadow-sm text-sm sm:text-base font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none disabled:opacity-50 transition-all"
+                                title="Apaga apenas o que veio da planilha (Não apaga manuais)"
+                            >
+                                {clearing ? 'Excluindo...' : 'Desfazer Importações'}
+                            </button>
+                        </div>
 
                         {syncResult && (
                             <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-left w-full animate-bounce-in">

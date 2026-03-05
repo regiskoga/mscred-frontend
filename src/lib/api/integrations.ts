@@ -25,5 +25,10 @@ export const integrationsApi = {
             user_id: userId,
         });
         return response.data;
+    },
+
+    async clearSync(userId: string): Promise<{ message: string }> {
+        const response = await api.delete(`/integrations/google-sheets/sync/${userId}`);
+        return response.data;
     }
 };
