@@ -10,6 +10,8 @@ import { Holidays } from './pages/Holidays';
 import { Catalogs } from './pages/Catalogs';
 import { PrivateRoute } from './components/PrivateRoute';
 
+import { GoalsManagement } from './pages/GoalsManagement';
+
 export function App() {
     return (
         <Routes>
@@ -26,6 +28,7 @@ export function App() {
                     <Route path="/dashboard/users" element={<Users />} />
                     <Route path="/dashboard/holidays" element={<Holidays />} />
                     <Route path="/dashboard/catalogs" element={<Catalogs />} />
+                    <Route path="/dashboard/goals" element={<GoalsManagement />} />
                 </Route>
             </Route>
         </Routes>

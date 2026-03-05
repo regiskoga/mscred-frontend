@@ -9,7 +9,8 @@ import {
     Menu,
     X,
     Calendar,
-    Settings
+    Settings,
+    Target
 } from 'lucide-react';
 
 export function DashboardLayout() {
@@ -55,6 +56,7 @@ export function DashboardLayout() {
         { name: 'Colaboradores', href: '/dashboard/users', icon: Users, show: canManageUsers },
         { name: 'Lojas', href: '/dashboard/stores', icon: Store, show: canManageStores },
         { name: 'Feriados', href: '/dashboard/holidays', icon: Calendar, show: canManageStores },
+        { name: 'Metas e Comissões', href: '/dashboard/goals', icon: Target, show: canManageUsers },
         { name: 'Configurações', href: '/dashboard/catalogs', icon: Settings, show: role === 'ADMIN' },
     ];
 
