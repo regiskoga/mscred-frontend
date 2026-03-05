@@ -21,10 +21,18 @@ export interface GoalProgress {
     currentTierPercentage: number;
 }
 
+export interface SalesByProduct {
+    productId: number;
+    productName: string;
+    totalValue: number;
+    count: number;
+}
+
 export interface DashboardMetricsResponse {
     workingDays: WorkingDaysMetrics;
     financialTotals: FinancialTotals;
     goalsProgress: GoalProgress[];
+    salesByProduct: SalesByProduct[];
 }
 
 export const dashboardAPI = {

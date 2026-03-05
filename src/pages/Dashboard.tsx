@@ -232,6 +232,54 @@ export function Dashboard() {
 
             </div>
 
+            {/* Resumo por Produto (Screenshot Style) */}
+            <div className="grid grid-cols-1 gap-6">
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
+                    <div className="bg-mscred-orange px-6 py-3 flex justify-between items-center">
+                        <h3 className="text-white font-bold uppercase tracking-wider text-sm">Resumo de Vendas por Produto</h3>
+                        <div className="px-2 py-0.5 bg-white/20 rounded text-[10px] text-white font-bold">ATUAL</div>
+                    </div>
+
+                    <div className="divide-y divide-slate-100">
+                        {metrics.salesByProduct.map((item, idx) => {
+                            const isCountable = ['BMG MED', 'EMISSAO CARDS', 'BMG_MED', 'EMISSAO_CARDS'].some(n =>
+                                item.productName.toUpperCase().includes(n)
+                            );
+
+                            // Cores baseadas no screenshot
+                            let rowColor = "bg-white";
+                            let textColor = "text-slate-700";
+
+                            const name = item.productName.toUpperCase();
+                            if (name.includes('CNC')) rowColor = "bg-[#FFD700]/10";
+                            if (name.includes('CARD')) rowColor = "bg-[#6495ED]/10";
+                            if (name.includes('FGTS')) rowColor = "bg-[#FF8C00]/10";
+                            if (name.includes('BMG MED')) rowColor = "bg-[#FFA500]/10";
+                            if (name.includes('CLT')) rowColor = "bg-[#FF4500]/10";
+                            if (name.includes('CONSIGNADO')) rowColor = "bg-[#D2691E]/10 font-bold";
+
+                            return (
+                                <div key={idx} className={`flex justify-between items-center px-6 py-2.5 ${rowColor} transition-colors hover:bg-slate-50`}>
+                                    <span className={`text-sm font-bold uppercase ${textColor}`}>{item.productName}</span>
+                                    <span className="text-sm font-black text-right">
+                                        {isCountable
+                                            ? item.count.toString().padStart(2, '0')
+                                            : formatCurrency(item.totalValue)
+                                        }
+                                    </span>
+                                </div>
+                            );
+                        })}
+
+                        {/* Linha de Total */}
+                        <div className="flex justify-between items-center px-6 py-3 bg-[#D2691E] text-white">
+                            <span className="text-sm font-black uppercase tracking-widest">Total Geral Aprovado</span>
+                            <span className="text-lg font-black">{formatCurrency(metrics.financialTotals.paidApproved)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Metas dos Produtos */}
             <div>
                 <div className="flex items-center gap-3 mb-6">
