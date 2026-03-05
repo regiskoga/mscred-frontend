@@ -29,6 +29,7 @@ export function Attendances() {
     const [attendances, setAttendances] = useState<Attendance[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
 
     const [page, setPage] = useState(1);
@@ -110,7 +111,37 @@ export function Attendances() {
         return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
     }
 
-    async function handleCreate(e: React.FormEvent) {
+    const openEditModal = (attendance: Attendance) => {
+        setEditingId(attendance.id);
+        setCustomerName(attendance.customer_name);
+        setCustomerCpf(attendance.customer_cpf);
+        setAttendanceDate(new Date(attendance.attendance_date).toISOString().split('T')[0]);
+        setProductId(attendance.product?.id?.toString() || '');
+        setOperationTypeId(attendance.operation_type?.id?.toString() || '');
+        setAttendanceStatusId(attendance.attendance_status?.id?.toString() || '');
+        setSalesChannelId(attendance.sales_channel?.id?.toString() || '');
+        setPaidApproved(attendance.paid_approved);
+        setCity(attendance.city || '');
+        setOriginBank(attendance.origin_bank || '');
+        setIsModalOpen(true);
+    };
+
+    const openCreateModal = () => {
+        setEditingId(null);
+        setCustomerName('');
+        setCustomerCpf('');
+        setAttendanceDate(new Date().toISOString().split('T')[0]);
+        setProductId('');
+        setOperationTypeId('');
+        setAttendanceStatusId('');
+        setSalesChannelId('');
+        setPaidApproved(false);
+        setCity('');
+        setOriginBank('');
+        setIsModalOpen(true);
+    };
+
+    async function handleSave(e: React.FormEvent) {
         e.preventDefault();
         setError('');
 
@@ -134,7 +165,11 @@ export function Attendances() {
                 origin_bank: originBank.trim() || undefined,
             };
 
-            await api.post('/attendances', payload);
+            if (editingId) {
+                await api.put(`/attendances/${editingId}`, payload);
+            } else {
+                await api.post('/attendances', payload);
+            }
 
             // Refetch and close
             await fetchAttendances();
@@ -199,7 +234,7 @@ export function Attendances() {
                     </div>
 
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openCreateModal}
                         className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow-sm bg-mscred-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mscred-orange"
                     >
                         <Plus className="w-4 h-4 mr-2 -ml-1" />
@@ -251,7 +286,12 @@ export function Attendances() {
                                         </tr>
                                     ) : (
                                         filteredAttendances.map((a) => (
-                                            <tr key={a.id} className="hover:bg-slate-50 transition-colors">
+                                            <tr
+                                                key={a.id}
+                                                className="hover:bg-slate-50 transition-colors cursor-pointer"
+                                                onClick={() => openEditModal(a)}
+                                                title="Clique para editar este Atendimento"
+                                            >
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm font-medium text-slate-900 flex items-center gap-2">
                                                         <User className="w-4 h-4 text-mscred-blue" />
@@ -382,10 +422,10 @@ export function Attendances() {
                                 </div>
                                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3 className="text-lg font-medium leading-6 text-slate-900" id="modal-title">
-                                        Registrar Novo Atendimento
+                                        {editingId ? 'Ficha de Atendimento (Edição)' : 'Registrar Novo Atendimento'}
                                     </h3>
                                     <p className="mt-1 text-sm text-slate-500">
-                                        Preencha os dados da triagem ou proposta formalizada.
+                                        {editingId ? 'Atualize os dados da proposta ou corrija as informações importadas.' : 'Preencha os dados da triagem ou proposta formalizada.'}
                                     </p>
                                 </div>
                             </div>
@@ -396,7 +436,7 @@ export function Attendances() {
                                 </div>
                             )}
 
-                            <form onSubmit={handleCreate} className="space-y-6">
+                            <form onSubmit={handleSave} className="space-y-6">
                                 {/* Secão 1: Cliente */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                     <h4 className="text-sm font-semibold text-slate-800 mb-3 uppercase tracking-wide">Dados do Cliente</h4>
