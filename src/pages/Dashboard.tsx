@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Calendar, CheckCircle, TrendingUp, Target, Award, ArrowUpRight, Clock, AlertCircle, RefreshCw, BarChart3, LineChart as LineChartIcon } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
+import { Calendar, CheckCircle, TrendingUp, Target, Award, ArrowUpRight, Clock, AlertCircle, RefreshCw, Users, Building2 } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, Cell } from 'recharts';
 import { dashboardAPI, DashboardMetricsResponse } from '../lib/api/dashboard';
 import { api } from '../lib/axios';
 
@@ -281,24 +281,24 @@ export function Dashboard() {
                 </div>
             </div>
 
-            {/* Evolução Histórica (Gráficos) - Apenas para Gestores e Admins */}
+            {/* Análise de Performance (Gráficos) - Apenas para Gestores e Admins */}
             {(isAdmin || isGestor) && metrics.monthlyEvolution && (
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                    {/* Evolução por Produto */}
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 mb-8">
+                    {/* 1. Evolução por Produto (3 meses) */}
                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-mscred-orange/10 rounded-lg text-mscred-orange">
                                     <TrendingUp className="w-5 h-5" />
                                 </div>
-                                <h2 className="text-lg font-bold text-slate-800">Evolução por Produto</h2>
+                                <h2 className="text-lg font-bold text-slate-800">Evolução Produto</h2>
                             </div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Últimos 6 meses</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">3 meses</span>
                         </div>
 
-                        <div className="h-80 w-full overflow-hidden">
+                        <div className="h-72 w-full overflow-hidden">
                             <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={metrics.monthlyEvolution.products} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                                <LineChart data={metrics.monthlyEvolution.productEvolution.series} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis
                                         dataKey="month"
@@ -314,27 +314,35 @@ export function Dashboard() {
                                         tickFormatter={(value) => value === 0 ? '0' : `R$ ${(value / 1000).toFixed(0)}k`}
                                     />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '11px' }}
+                                        contentStyle={{
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                            backdropFilter: 'blur(8px)',
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                                            fontSize: '11px',
+                                            fontWeight: 600
+                                        }}
                                         formatter={(value: any) => formatCurrency(value)}
-                                        cursor={{ stroke: '#cbd5e1', strokeWidth: 1 }}
                                     />
                                     <Legend
                                         iconType="circle"
                                         verticalAlign="bottom"
                                         height={40}
-                                        iconSize={8}
-                                        wrapperStyle={{ fontSize: '9px', paddingTop: '15px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}
+                                        iconSize={6}
+                                        wrapperStyle={{ fontSize: '8px', paddingTop: '15px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}
                                     />
-                                    {metrics.monthlyEvolution.productNames.map((name, index) => (
+                                    {metrics.monthlyEvolution.productEvolution.names.map((name: string, index: number) => (
                                         <Line
                                             key={name}
                                             type="monotone"
                                             dataKey={name}
-                                            stroke={['#F59E0B', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#22C55E'][index % 8]}
+                                            stroke={['#F59E0B', '#3B82F6', '#10B981', '#6366F1', '#EC4899', '#8B5CF6', '#06B6D4', '#F43F5E'][index % 8]}
                                             strokeWidth={3}
-                                            dot={{ r: 2, strokeWidth: 2, fill: '#fff' }}
-                                            activeDot={{ r: 4, strokeWidth: 0, fill: '#F59E0B' }}
+                                            dot={{ r: 3, strokeWidth: 2, fill: '#fff' }}
+                                            activeDot={{ r: 5, strokeWidth: 0, fill: '#F59E0B' }}
                                             animationDuration={1500}
+                                            animationEasing="ease-in-out"
                                         />
                                     ))}
                                 </LineChart>
@@ -342,21 +350,21 @@ export function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Evolução por Operador */}
+                    {/* 2. Evolução por Loja (3 meses) */}
                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-mscred-blue/10 rounded-lg text-mscred-blue">
-                                    <UsersIcon className="w-5 h-5" />
+                                <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                                    <Building2 className="w-5 h-5" />
                                 </div>
-                                <h2 className="text-lg font-bold text-slate-800">Performance (Operadores)</h2>
+                                <h2 className="text-lg font-bold text-slate-800">Performance Lojas</h2>
                             </div>
-                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-black tracking-widest uppercase">Operadores Ativos</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">3 meses</span>
                         </div>
 
-                        <div className="h-80 w-full overflow-hidden">
+                        <div className="h-72 w-full overflow-hidden">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={metrics.monthlyEvolution.consultants} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                                <BarChart data={metrics.monthlyEvolution.storeEvolution.series} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis
                                         dataKey="month"
@@ -372,26 +380,105 @@ export function Dashboard() {
                                         tickFormatter={(value) => value === 0 ? '0' : `R$ ${(value / 1000).toFixed(0)}k`}
                                     />
                                     <Tooltip
-                                        cursor={{ fill: '#f8fafc', radius: 4 }}
-                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '11px' }}
+                                        cursor={{ fill: '#f8fafc', radius: 8 }}
+                                        contentStyle={{
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                            backdropFilter: 'blur(8px)',
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                                            fontSize: '11px',
+                                            fontWeight: 600
+                                        }}
                                         formatter={(value: any) => formatCurrency(value)}
                                     />
                                     <Legend
                                         iconType="rect"
                                         verticalAlign="bottom"
                                         height={40}
-                                        iconSize={8}
-                                        wrapperStyle={{ fontSize: '9px', paddingTop: '15px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}
+                                        iconSize={6}
+                                        wrapperStyle={{ fontSize: '8px', paddingTop: '15px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}
                                     />
-                                    {metrics.monthlyEvolution.consultantNames.map((name, index) => (
+                                    {metrics.monthlyEvolution.storeEvolution.names.map((name: string, index: number) => (
                                         <Bar
                                             key={name}
                                             dataKey={name}
-                                            fill={['#3B82F6', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#22C55E'][index % 8]}
-                                            radius={[3, 3, 0, 0]}
+                                            fill={['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#22C55E'][index % 8]}
+                                            radius={[4, 4, 0, 0]}
                                             animationDuration={1500}
+                                            animationEasing="ease-out"
                                         />
                                     ))}
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+
+                    {/* 3. Ranking de Operadores (Mês Atual) */}
+                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
+                                    <Users className="w-5 h-5" />
+                                </div>
+                                <h2 className="text-lg font-bold text-slate-800">Ranking do Mês</h2>
+                            </div>
+                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-black tracking-widest uppercase">Operadores</span>
+                        </div>
+
+                        <div className="h-72 w-full overflow-hidden">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart
+                                    data={metrics.monthlyEvolution.consultantRanking}
+                                    layout="vertical"
+                                    margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                                    <XAxis
+                                        type="number"
+                                        hide
+                                    />
+                                    <YAxis
+                                        type="category"
+                                        dataKey="name"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        fontSize={9}
+                                        width={80}
+                                        tick={{ fill: '#475569', fontWeight: 600 }}
+                                    />
+                                    <Tooltip
+                                        cursor={{ fill: '#f8fafc', radius: 4 }}
+                                        contentStyle={{
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                            backdropFilter: 'blur(8px)',
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                                            fontSize: '11px',
+                                            fontWeight: 600
+                                        }}
+                                        formatter={(value: any) => formatCurrency(value)}
+                                    />
+                                    <Bar
+                                        dataKey="value"
+                                        radius={[0, 6, 6, 0]}
+                                        barSize={14}
+                                        animationDuration={1500}
+                                        animationEasing="ease-out"
+                                    >
+                                        {metrics.monthlyEvolution.consultantRanking.map((_, index: number) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={
+                                                    index === 0 ? '#F59E0B' : // Ouro para o 1º
+                                                        index === 1 ? '#94A3B8' : // Prata para o 2º
+                                                            index === 2 ? '#B45309' : // Bronze para o 3º
+                                                                '#3B82F6'                 // Azul para os demais
+                                                }
+                                            />
+                                        ))}
+                                    </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>

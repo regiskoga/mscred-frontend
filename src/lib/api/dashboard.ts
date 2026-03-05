@@ -29,10 +29,18 @@ export interface SalesByProduct {
 }
 
 export interface MonthlyEvolution {
-    products: any[];
-    consultants: any[];
-    productNames: string[];
-    consultantNames: string[];
+    productEvolution: {
+        series: any[];
+        names: string[];
+    };
+    storeEvolution: {
+        series: any[];
+        names: string[];
+    };
+    consultantRanking: {
+        name: string;
+        value: number;
+    }[];
 }
 
 export interface DashboardMetricsResponse {
