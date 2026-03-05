@@ -176,12 +176,12 @@ export function GoalsManagement() {
                     <p className="text-slate-500 text-sm mt-1">Gerencie Metas de Vendas e Faixas de Comissionamento Global ou por Unidade.</p>
                 </div>
                 {activeTab === 'goals' && (
-                    <button onClick={() => { setEditingGoal(null); setGoalForm({ product_id: products[0]?.id.toString() || '', store_id: '', user_id: '', month: new Date().getMonth() + 1, year: new Date().getFullYear(), target: '' }); setIsGoalModalOpen(true); }} className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    <button onClick={() => { setEditingGoal(null); setGoalForm({ product_id: products[0]?.id?.toString() || '', store_id: '', user_id: '', month: new Date().getMonth() + 1, year: new Date().getFullYear(), target: '' }); setIsGoalModalOpen(true); }} className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                         <Plus className="w-4 h-4 mr-2" /> Nova Meta
                     </button>
                 )}
                 {activeTab === 'tiers' && (
-                    <button onClick={() => { setEditingTier(null); setTierForm({ product_id: products[0]?.id.toString() || '', min_value: '', percentage: '' }); setIsTierModalOpen(true); }} className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    <button onClick={() => { setEditingTier(null); setTierForm({ product_id: products[0]?.id?.toString() || '', min_value: '', percentage: '' }); setIsTierModalOpen(true); }} className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                         <Plus className="w-4 h-4 mr-2" /> Nova Faixa
                     </button>
                 )}
