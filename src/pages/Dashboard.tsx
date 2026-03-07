@@ -236,47 +236,82 @@ export function Dashboard() {
             {/* Resumo por Produto (Screenshot Style) */}
             <div className="grid grid-cols-1 gap-6">
                 <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-                    <div className="bg-mscred-orange px-6 py-3 flex justify-between items-center">
-                        <h3 className="text-white font-bold uppercase tracking-wider text-sm">Resumo de Vendas por Produto</h3>
-                        <div className="px-2 py-0.5 bg-white/20 rounded text-[10px] text-white font-bold">ATUAL</div>
+                    <div className="bg-[#FF4500] px-6 py-4 flex justify-between items-center">
+                        <h3 className="text-white font-black uppercase tracking-wider text-sm flex items-center gap-2">
+                            RESUMO DE VENDAS POR PRODUTO
+                        </h3>
                     </div>
 
-                    <div className="divide-y divide-slate-100">
-                        {metrics.salesByProduct.map((item, idx) => {
-                            const isCountable = ['BMG MED', 'EMISSAO CARDS', 'BMG_MED', 'EMISSAO_CARDS'].some(n =>
-                                item.productName.toUpperCase().includes(n)
-                            );
+                    <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                            <thead>
+                                <tr className="bg-[#FF4500] text-white text-[10px] font-black uppercase tracking-tighter">
+                                    <th className="px-4 py-2 text-left border-r border-white/10 w-48">PRODUTO</th>
+                                    <th className="px-4 py-2 text-right border-r border-white/10 bg-white/10">ATUAL</th>
+                                    <th className="px-4 py-2 text-right border-r border-white/10">META</th>
+                                    <th className="px-4 py-2 text-right border-r border-white/10">% ATING</th>
+                                    <th className="px-4 py-2 text-right border-r border-white/10">PROJEÇÃO</th>
+                                    <th className="px-4 py-2 text-right border-r border-white/10">%</th>
+                                    <th className="px-4 py-2 text-right border-r border-white/10">IDEAL HOJE</th>
+                                    <th className="px-4 py-2 text-right">SALDO</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {metrics.salesByProduct.map((item, idx) => {
+                                    const isCountable = ['BMG MED', 'EMISSAO CARDS', 'BMG_MED', 'EMISSAO_CARDS'].some(n =>
+                                        item.productName.toUpperCase().includes(n)
+                                    );
 
-                            // Cores baseadas no screenshot
-                            let rowColor = "bg-white";
-                            let textColor = "text-slate-700";
+                                    // Cores baseadas no screenshot
+                                    let rowColor = "bg-white";
+                                    const name = item.productName.toUpperCase();
 
-                            const name = item.productName.toUpperCase();
-                            if (name.includes('CNC')) rowColor = "bg-[#FFD700]/10";
-                            if (name.includes('CARD')) rowColor = "bg-[#6495ED]/10";
-                            if (name.includes('FGTS')) rowColor = "bg-[#FF8C00]/10";
-                            if (name.includes('BMG MED')) rowColor = "bg-[#FFA500]/10";
-                            if (name.includes('CLT')) rowColor = "bg-[#FF4500]/10";
-                            if (name.includes('CONSIGNADO')) rowColor = "bg-[#D2691E]/10 font-bold";
+                                    if (name.includes('CNC')) rowColor = "bg-[#FFFACD]";
+                                    if (name.includes('CARD')) rowColor = "bg-[#F0F8FF]";
+                                    if (name.includes('FGTS')) rowColor = "bg-[#FFF5EE]";
+                                    if (name.includes('BMG MED')) rowColor = "bg-[#FFF5E6]";
+                                    if (name.includes('CLT')) rowColor = "bg-[#FDF5E6]";
+                                    if (name.includes('CONSIGNADO')) rowColor = "bg-[#F5F5DC] font-bold";
 
-                            return (
-                                <div key={idx} className={`flex justify-between items-center px-6 py-2.5 ${rowColor} transition-colors hover:bg-slate-50`}>
-                                    <span className={`text-sm font-bold uppercase ${textColor}`}>{item.productName}</span>
-                                    <span className="text-sm font-black text-right">
-                                        {isCountable
-                                            ? item.count.toString().padStart(2, '0')
-                                            : formatCurrency(item.totalValue)
-                                        }
-                                    </span>
-                                </div>
-                            );
-                        })}
+                                    return (
+                                        <tr key={idx} className={`${rowColor} transition-colors hover:brightness-95 text-slate-800 font-bold text-xs`}>
+                                            <td className="px-4 py-2.5 uppercase border-r border-slate-200/50">{item.productName}</td>
+                                            <td className="px-4 py-2.5 text-right border-r border-slate-200/50 bg-slate-50/50">
+                                                {isCountable ? item.count.toString().padStart(2, '0') : formatCurrency(item.totalValue)}
+                                            </td>
+                                            <td className="px-4 py-2.5 text-right border-r border-slate-200/50">{formatCurrency(item.target)}</td>
+                                            <td className="px-4 py-2.5 text-right border-r border-slate-200/50">{item.percentageAchieved}%</td>
+                                            <td className="px-4 py-2.5 text-right border-r border-slate-200/50">{formatCurrency(item.projection)}</td>
+                                            <td className="px-4 py-2.5 text-right border-r border-slate-200/50">{item.projectionPercentage}%</td>
+                                            <td className="px-4 py-2.5 text-right border-r border-slate-200/50">{formatCurrency(item.idealToday)}</td>
+                                            <td className={`px-4 py-2.5 text-right ${item.balance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                {formatCurrency(item.balance)}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
 
-                        {/* Linha de Total */}
-                        <div className="flex justify-between items-center px-6 py-3 bg-[#D2691E] text-white">
-                            <span className="text-sm font-black uppercase tracking-widest">Total Geral Aprovado</span>
-                            <span className="text-lg font-black">{formatCurrency(metrics.financialTotals.paidApproved)}</span>
-                        </div>
+                                {/* Linha de Total */}
+                                <tr className="bg-[#D2691E] text-white font-black text-sm">
+                                    <td className="px-4 py-3 uppercase tracking-widest">Total Geral</td>
+                                    <td className="px-4 py-3 text-right">
+                                        {formatCurrency(metrics.salesByProduct.reduce((acc, curr) => acc + curr.totalValue, 0))}
+                                    </td>
+                                    <td className="px-4 py-3 text-right">
+                                        {formatCurrency(metrics.salesByProduct.reduce((acc, curr) => acc + curr.target, 0))}
+                                    </td>
+                                    <td className="px-4 py-3 text-right">
+                                        {(metrics.salesByProduct.reduce((acc, curr) => acc + curr.target, 0) > 0
+                                            ? (metrics.salesByProduct.reduce((acc, curr) => acc + (curr.totalValue), 0) / metrics.salesByProduct.reduce((acc, curr) => acc + curr.target, 0) * 100)
+                                            : 0).toFixed(2)}%
+                                    </td>
+                                    <td className="px-4 py-3 text-right">
+                                        {formatCurrency(metrics.salesByProduct.reduce((acc, curr) => acc + curr.projection, 0))}
+                                    </td>
+                                    <td colSpan={3}></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

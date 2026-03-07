@@ -24,8 +24,14 @@ export interface GoalProgress {
 export interface SalesByProduct {
     productId: number;
     productName: string;
-    totalValue: number;
+    totalValue: number; // ATUAL
     count: number;
+    target: number; // META
+    percentageAchieved: number; // % ATING
+    projection: number; // PROJECAO
+    projectionPercentage: number; // % (PROJ/META)
+    idealToday: number; // IDEAL HOJE
+    balance: number; // SALDO
 }
 
 export interface MonthlyEvolution {
